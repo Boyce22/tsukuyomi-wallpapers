@@ -7,9 +7,9 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": ".", // alterado
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"] // corrigido
+      "@/*": ["src/*"]
     },
     "forceConsistentCasingInFileNames": true
   }

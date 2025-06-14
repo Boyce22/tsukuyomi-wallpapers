@@ -1,21 +1,25 @@
-import { User } from "./user";
-import { Wallpaper } from "./wallpaper";
+import { User } from './user';
+import { Wallpaper } from './wallpaper';
 
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToMany,
-  ManyToOne,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 'typeorm';
 
-@Entity("tag")
+@Entity('tag')
 export class Tag {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid', {
+    comment: 'Identificador único da tag, gerado automaticamente.',
+  })
   id!: string;
 
-  @Column({ unique: true })
+  @Column({
+    unique: true,
+    comment: 'Nome único da tag que identifica cada tag de forma exclusiva.',
+  })
   name!: string;
+
+  @Column({
+    comment: 'Descrição da tag, que explica seu significado ou contexto.',
+  })
+  description!: string;
 
   @ManyToMany(() => Wallpaper, (wallpaper) => wallpaper.tags)
   wallpapers!: Wallpaper[];
