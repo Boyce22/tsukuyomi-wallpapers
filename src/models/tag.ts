@@ -5,7 +5,9 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 't
 
 @Entity('tag')
 export class Tag {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', {
+    comment: 'Identificador único da tag, gerado automaticamente.',
+  })
   id!: string;
 
   @Column({
