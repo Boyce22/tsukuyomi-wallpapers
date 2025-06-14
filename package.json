@@ -1,0 +1,30 @@
+{
+  "name": "tsukuyomi",
+  "version": "0.0.1",
+  "description": "Tsukuyomi é a API responsável por gerenciar toda a lógica de negócios e persistência de dados de uma plataforma de conteúdo visual e artístico, com foco em alta performance, organização eficiente de mídias e controle de usuários.",
+  "license": "ISC",
+  "author": "b0yce22",
+  "main": "main.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register --env-file=.env src/server.ts",
+    "migration:run": "node -r tsconfig-paths/register ./node_modules/.bin/typeorm-ts-node-commonjs migration:run -d src/config/database.ts",
+    "migration:generate": "node -r tsconfig-paths/register ./node_modules/.bin/typeorm-ts-node-commonjs migration:generate -d src/config/database.ts",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.0",
+    "reflect-metadata": "^0.2.2",
+    "tsconfig-paths": "^4.2.0",
+    "typeorm": "^0.3.24"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
