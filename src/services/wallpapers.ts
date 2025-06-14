@@ -1,27 +1,28 @@
+import { Tag } from '@/models/tag';
 import { UrlNotFound } from '@/exceptions/url-not-found';
 import { UrlNotProvided } from '@/exceptions/url-not-provided';
 
-import { IWallpaperService } from '@/_types/services/wallpapers';
-import { RegisterWallpaper } from '@/_types/dtos/register-wallpaper';
-import type { IWallpapersRepository } from '@/_types/repositories/wallpapers';
+import type { IWallpaperService } from '@/_types/services/wallpapers';
+import type { RegisterWallpaper } from '@/_types/dtos/wallpapers/register-wallpaper';
+import type { IWallpaperRepository } from '@/_types/repositories/wallpapers';
 
-class WallpapersService implements IWallpaperService {
-  private repository: IWallpapersRepository;
+class WallpaperService implements IWallpaperService {
+  private repository: IWallpaperRepository;
 
   /**
    * @param repository - Instância do repositório do modelo de wallpapers
    */
-  constructor(repository: IWallpapersRepository) {
+  constructor(repository: IWallpaperRepository) {
     this.repository = repository;
   }
 
   /**
-   * Cria uma nova instância do serviço WallpapersService
+   * Cria uma nova instância do serviço WallpaperService
    * @param repository - Repositório do modelo de wallpapers
    * @returns Instância do serviço
    */
-  static createInstance(repository: IWallpapersRepository): WallpapersService {
-    return new WallpapersService(repository);
+  static createInstance(repository: IWallpaperRepository): WallpaperService {
+    return new WallpaperService(repository);
   }
 
   /**
@@ -45,9 +46,15 @@ class WallpapersService implements IWallpaperService {
     return urlOriginalSize;
   };
 
-  register = async (dto: RegisterWallpaper): Promise<string> => {
-    throw new Error('Method not implemented.');
+  register = async (dto: RegisterWallpaper, tags: Tag[]): Promise<string> => {
+    try {
+      const wallpaper = await this.repository.register(dto, tags);
+      return wallpaper.id;
+    } catch (error) {
+      console.error('Error registering wallpaper:', error);
+      throw error;
+    }
   };
 }
 
-export default WallpapersService;
+export default WallpaperService;

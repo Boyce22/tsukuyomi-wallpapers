@@ -8,7 +8,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTabl
 export class User {
   @PrimaryGeneratedColumn('uuid', { comment: 'Identificador único do usuário, gerado automaticamente.' })
   id!: string;
-  
+
   @Column({ comment: 'Nome próprio do usuário.' })
   name!: string;
 
