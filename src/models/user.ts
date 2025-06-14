@@ -6,16 +6,16 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTabl
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', { comment: 'Identificador único do usuário, gerado automaticamente.' })
   id!: string;
-
-  @Column()
+  
+  @Column({ comment: 'Nome próprio do usuário.' })
   name!: string;
 
-  @Column()
+  @Column({ comment: 'Sobrenome do usuário.' })
   lastName!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, comment: 'Nome de usuário único utilizado para login e identificação.' })
   userName!: string;
 
   @OneToMany(() => Wallpaper, (wallpaper) => wallpaper.createdBy)
@@ -31,6 +31,6 @@ export class User {
   updatedTags!: Tag[];
 
   @ManyToMany(() => Role, (role) => role.users)
-  @JoinTable({ name: 'user_role'})
+  @JoinTable({ name: 'user_role' })
   roles!: Role[];
 }
