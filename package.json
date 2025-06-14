@@ -7,8 +7,8 @@
   "main": "main.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register --env-file=.env src/server.ts",
-    "migration:run": "node -r tsconfig-paths/register ./node_modules/.bin/typeorm-ts-node-commonjs migration:run -d src/config/database.ts",
-    "migration:generate": "node -r tsconfig-paths/register ./node_modules/.bin/typeorm-ts-node-commonjs migration:generate -d src/config/database.ts",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/database.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/database.ts",
     "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
