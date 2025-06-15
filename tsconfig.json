@@ -11,6 +11,11 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist", // pasta onde o JS compilado vai
+    "rootDir": "src", // pasta raiz do TS fonte
+    "sourceMap": true // gera sourcemap para facilitar debug
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
