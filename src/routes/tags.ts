@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 
 import TagsController from '@/controllers/tags';
-import type { ITagService } from '@/_types/services/tags';
+import { ITagService } from '@/_types/tags/tags.type';
 
 export const createTagsRouter = (tagService: ITagService) => {
   const router = Router();

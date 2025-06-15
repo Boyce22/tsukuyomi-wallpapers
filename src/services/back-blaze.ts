@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { TagNotFound } from '@/exceptions/tag-not-found';
 import { QualityCompress } from '@/_types/common/quality.enum';
 import { ITagService } from '@/_types/tags/tags.type';
-import { CreateWallpaper, CreateWallpaperRequest, IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
+import { CreateWallpaperRequest, IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
 import { IImageCompressService } from '@/_types/compress/compress.type';
 
 type ConstructorParams = {
@@ -61,16 +61,16 @@ class WallpaperController {
     }
   }
 
-  async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
+  async register(req: Request, res: Response): Promise<void> {
     try {
       const file = req.file;
-
       if (!file) {
         res.status(400).json({ error: 'File is required' });
         return;
       }
 
-      const dto: CreateWallpaper = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const dto: CreateWallpaperRequest['body'] =
+        typeof req.body.body === 'string' ? JSON.parse(req.body.body) : req.body;
 
       if (!Array.isArray(dto.tagsIDs) || !dto.tagsIDs.length) {
         res.status(400).json({ error: 'tagsIDs must be a non-empty array' });
@@ -88,7 +88,6 @@ class WallpaperController {
       });
 
       const created = await this.wallpaperService.register(dto, tags);
-      
       res.status(201).json({ id: created.id });
     } catch (error) {
       if (error instanceof TagNotFound) {

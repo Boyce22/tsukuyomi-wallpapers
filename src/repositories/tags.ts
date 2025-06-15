@@ -1,15 +1,18 @@
 import { Tag } from '@/models/tag';
 import { In, Repository } from 'typeorm';
 import AppDataSource from '@/config/database';
-import type { ITagRepository } from '@/_types/repositories/tags';
-import type { RegisterTag } from '@/_types/dtos/tags/register-tag';
+
+import { CreateTag, ITagRepository } from '@/_types/tags/tags.type';
 
 /**
- * Repositório responsável por realizar operações no banco de dados relacionadas à entidade Tag.
+ * Repositório responsável por operações no banco de dados relacionadas à entidade Tag.
  */
 export class TagRepository implements ITagRepository {
   private repository: Repository<Tag>;
 
+  /**
+   * Inicializa o repositório TypeORM para a entidade Tag.
+   */
   constructor() {
     this.repository = AppDataSource.getRepository(Tag);
   }
@@ -25,24 +28,23 @@ export class TagRepository implements ITagRepository {
   /**
    * Busca todas as tags que correspondem a uma lista de IDs.
    * @param {string[]} ids - Lista de IDs das tags a serem buscadas.
-   * @returns {Promise<Tag[] | null>} Lista de tags encontradas ou null.
+   * @returns {Promise<Tag[]>} Promise que resolve com a lista de tags encontradas.
    */
-  findAllByIds = async (ids: string[]): Promise<Tag[] | null> => {
-    const tags = await this.repository.find({ where: { id: In([...ids]) } });
-    return tags;
+  findAllByIds = async (ids: string[]): Promise<Tag[]> => {
+    return this.repository.find({ where: { id: In(ids) } });
   };
 
   /**
    * Registra uma nova tag no banco de dados.
-   * @param {RegisterTag} dto - Objeto contendo os dados da tag a ser registrada.
-   * @returns {Promise<Tag>} A tag criada.
+   * @param {CreateTag} dto - Objeto contendo os dados da tag a ser registrada.
+   * @returns {Promise<Tag>} Promise que resolve para a tag criada.
    */
-  register = async (dto: RegisterTag): Promise<Tag> => {
-    const tag = await this.repository.save({
-      description: dto?.description,
+  register = async (dto: CreateTag): Promise<Tag> => {
+    const tag = this.repository.create({
+      description: dto.description,
       name: dto.name,
     });
 
-    return tag;
+    return this.repository.save(tag);
   };
 }

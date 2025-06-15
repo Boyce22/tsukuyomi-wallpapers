@@ -1,34 +1,36 @@
 import { Tag } from '@/models/tag';
-import { IdNotProvided } from '@/exceptions/id-not-provided';
-
-import type { ITagService } from '@/_types/services/tags';
-import type { ITagRepository } from '@/_types/repositories/tags';
-import type { RegisterTag } from '@/_types/dtos/tags/register-tag';
 import { TagNotFound } from '@/exceptions/tag-not-found';
+import { IdNotProvided } from '@/exceptions/id-not-provided';
+import { CreateTag, ITagRepository, ITagService } from '@/_types/tags/tags.type';
 
 class TagService implements ITagService {
   private repository: ITagRepository;
 
   /**
    * Construtor do serviço TagService
-   * @param repository - Instância do repositório para tags
+   * @param {ITagRepository} repository - Instância do repositório para tags
    */
   constructor(repository: ITagRepository) {
     this.repository = repository;
   }
 
-  static createInstance(repository: ITagRepository) {
+  /**
+   * Cria uma nova instância do serviço TagService
+   * @param {ITagRepository} repository - Repositório de tags
+   * @returns {TagService} Instância do serviço TagService
+   */
+  static createInstance(repository: ITagRepository): TagService {
     return new TagService(repository);
   }
 
   /**
    * Busca várias tags pelos seus IDs
-   * @param ids - Array de IDs das tags
-   * @returns Lista de tags encontradas ou null se não houver IDs
-   * @throws IdNotProvided se o array de IDs estiver vazio
-   * @throws TagNotFound se o array de Tags estiver vazio ou nulo
+   * @param {string[]} ids - Array de IDs das tags
+   * @returns {Promise<Tag[]>} Promise que resolve para a lista de tags encontradas
+   * @throws {IdNotProvided} Se o array de IDs estiver vazio
+   * @throws {TagNotFound} Se nenhuma tag for encontrada para os IDs fornecidos
    */
-  findAllByIds = async (ids: string[]): Promise<Tag[]> => {
+  async findAllByIds(ids: string[]): Promise<Tag[]> {
     if (!ids.length) {
       throw new IdNotProvided('Tag ID must be provided');
     }
@@ -40,16 +42,15 @@ class TagService implements ITagService {
     }
 
     return tags;
-  };
+  }
 
   /**
-   * Registra uma nova tag, possivelmente associando-a a outras tags
-   * @param dto - Dados para criação da tag
-   * @param tags - Lista de tags associadas (opcional)
-   * @returns ID da tag criada
-   * @throws Erro ao registrar a tag
+   * Registra uma nova tag
+   * @param {CreateTag} dto - Dados para criação da tag
+   * @returns {Promise<string>} Promise que resolve para o ID da tag criada
+   * @throws {Erro} Erro caso ocorra falha no registro da tag
    */
-  register = async (dto: RegisterTag): Promise<string> => {
+  async register(dto: CreateTag): Promise<string> {
     try {
       const tag = await this.repository.register(dto);
       return tag.id;
@@ -57,7 +58,7 @@ class TagService implements ITagService {
       console.error('Error registering tag:', error);
       throw error;
     }
-  };
+  }
 }
 
 export default TagService;
