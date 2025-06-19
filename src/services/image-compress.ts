@@ -1,16 +1,11 @@
 import path from 'path';
-import fs from 'fs/promises';
 import sharp, { Sharp } from 'sharp';
 import { QualityCompress } from '@/_types/common/quality.enum';
-import { IImageCompressService, ImageCompressParams } from '@/_types/compress/compress.type';
-
-type CompressResult = {
-  original: { path: string; size: number };
-  compressed: { path: string; size: number };
-};
+import { CompressResult, IImageCompressService, ImageCompressParams } from '@/_types/compress/compress.type';
 
 /**
- * Classe responsável por comprimir imagens dinamicamente com base na extensão do arquivo.
+ * Classe responsável por comprimir imagens dinamicamente com base na extensão do arquivo,
+ * retornando buffers ao invés de salvar arquivos no disco.
  */
 class ImageCompressService implements IImageCompressService {
   public static createInstance() {
@@ -30,35 +25,36 @@ class ImageCompressService implements IImageCompressService {
   };
 
   /**
-   * Comprime a imagem dinamicamente com base na extensão do arquivo de saída.
+   * Comprime a imagem dinamicamente com base na extensão da imagem de entrada.
    *
    * @param {ImageCompressParams} params - Parâmetros para compressão da imagem.
    * @param {string} params.path - Caminho da imagem de entrada.
-   * @param {string} params.outputPath - Caminho onde salvar a imagem comprimida.
    * @param {QualityCompress} [params.quality=QualityCompress.MEDIUM] - Nível de compressão.
-   * @returns {Promise<CompressResult>} Promessa que resolve com os tamanhos dos arquivos original e comprimido.
+   * @returns {Promise<CompressResult>} Promessa que resolve com buffers e tamanhos dos arquivos original e comprimido.
    * @throws {Error} Se o formato da imagem não for suportado ou ocorrer erro na compressão.
    */
-  async compress({ path, outputPath, quality = QualityCompress.MEDIUM }: ImageCompressParams): Promise<CompressResult> {
+  async compress({ path, quality = QualityCompress.MEDIUM }: ImageCompressParams): Promise<CompressResult> {
     try {
-      const extension = this._getExtension(outputPath);
+      const extension = this._getExtension(path);
       const formatFn = this.formatMap[extension];
 
       if (!formatFn) {
         throw new Error(`Unsupported image format: ${extension}`);
       }
 
-      const transformed = formatFn(sharp(path), quality);
-      await transformed.toFile(outputPath);
+      // Buffer do arquivo original
+      const originalBuffer = await sharp(path).toBuffer();
+      const originalSize = originalBuffer.length;
 
-      // Obtém o tamanho dos arquivos em bytes
-      const originalStats = await fs.stat(path);
-      const compressedStats = await fs.stat(outputPath);
+      // Compressão
+      const compressedBuffer = await formatFn(sharp(path), quality).toBuffer();
+      const compressedSize = compressedBuffer.length;
 
       return {
-        original: { path, size: originalStats.size },
-        compressed: { path: outputPath, size: compressedStats.size },
+        original: { path, size: originalSize, buffer: originalBuffer },
+        compressed: { path: `${path}_compressed.${extension}`, size: compressedSize, buffer: compressedBuffer },
       };
+      
     } catch (error) {
       console.error('Error compressing image:', error);
       throw error;
