@@ -25,6 +25,13 @@ export class User {
   userName!: string;
 
   @Column({
+    type: 'date',
+    nullable: true,
+    comment: 'Data de nascimento do usuário.',
+  })
+  dateBirth?: Date;
+
+  @Column({
     unique: true,
     length: 255,
     comment: 'Endereço de e-mail do usuário, deve ser único (máx. 255 caracteres).',
