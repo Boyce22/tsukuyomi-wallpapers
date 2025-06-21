@@ -15,7 +15,7 @@ class UserController {
 
   async register(req: Request, res: Response) {
     try {
-        
+
     } catch (error) {
         
     }
