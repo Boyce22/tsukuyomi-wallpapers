@@ -49,6 +49,6 @@ export class TagRepository implements ITagRepository {
       description: dto.description,
     });
 
-    return this.repository.save(tag);
+    return await this.repository.save(tag);
   }
 }

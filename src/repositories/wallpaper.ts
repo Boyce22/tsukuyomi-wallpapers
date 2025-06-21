@@ -54,7 +54,7 @@ class WallpaperRepository implements IWallpaperRepository {
       tags,
     });
 
-    return this.repository.save(wallpaper);
+    return await this.repository.save(wallpaper);
   }
 }
 

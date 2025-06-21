@@ -35,7 +35,7 @@ export class User {
     nullable: true,
     comment: 'Data de nascimento do usuário.',
   })
-  dateBirth?: Date;
+  birthDate?: Date;
 
   @Column({
     unique: true,
