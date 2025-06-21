@@ -14,7 +14,7 @@ class WallpaperService implements IWallpaperService {
 
   /**
    * Cria uma instância do serviço de wallpapers.
-   * 
+   *
    * @param {IWallpaperRepository} repository - Repositório para acesso aos dados de wallpapers.
    */
   constructor(repository: IWallpaperRepository) {
@@ -23,7 +23,7 @@ class WallpaperService implements IWallpaperService {
 
   /**
    * Cria uma nova instância do serviço a partir do repositório fornecido.
-   * 
+   *
    * @param {IWallpaperRepository} repository - Repositório para persistência e consulta.
    * @returns {WallpaperService} Nova instância do serviço.
    */
@@ -33,7 +33,7 @@ class WallpaperService implements IWallpaperService {
 
   /**
    * Obtém a URL da imagem original do wallpaper pelo seu ID.
-   * 
+   *
    * @param {string} id - ID do wallpaper.
    * @returns {Promise<string>} Promise que resolve para a URL da imagem original.
    * @throws {UrlNotProvided} Caso o ID seja nulo, vazio ou inválido.
@@ -55,7 +55,7 @@ class WallpaperService implements IWallpaperService {
 
   /**
    * Registra um novo wallpaper e associa as tags informadas.
-   * 
+   *
    * @param {CreateWallpaper} dto - Dados para criação do wallpaper.
    * @param {Tag[]} tags - Lista de tags associadas ao wallpaper.
    * @returns {Promise<Wallpaper>} Promise que resolve para o wallpaper recém-registrado.
