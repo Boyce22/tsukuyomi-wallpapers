@@ -31,6 +31,7 @@ class TagsController {
    *
    * @param req - Requisição HTTP contendo os dados da tag no corpo.
    * @param res - Resposta HTTP que retorna o ID da tag criada.
+   * @returns Promise que resolve quando a operação é concluída.
    */
   register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -50,6 +51,7 @@ class TagsController {
    *
    * @param req - Requisição HTTP contendo o array de IDs no corpo (`req.body.ids`).
    * @param res - Resposta HTTP com as tags encontradas.
+   * @returns Promise que resolve quando a operação é concluída.
    */
   findAllByIds = async (req: Request, res: Response): Promise<void> => {
     try {
