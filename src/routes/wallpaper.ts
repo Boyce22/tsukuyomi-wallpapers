@@ -1,10 +1,12 @@
+import multer from '@/config/multer';
+
 import { Router, type Request, type Response } from 'express';
 
-import { ITagService } from '@/_types/tags/tags.type';
-import WallpaperController from '@/controllers/wallpapers';
+import { ITagService } from '@/_types/tags/tag.type';
+import WallpaperController from '@/controllers/wallpaper';
 import { IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
 import { IImageCompressService } from '@/_types/compress/compress.type';
-import multer from '@/config/multer';
+
 import { IStorageService } from '@/_types/storage/storage.type';
 
 type ConstructorParams = {
@@ -14,12 +16,13 @@ type ConstructorParams = {
   storageService: IStorageService;
 };
 
-export const createWallpapersRouter = (params: ConstructorParams) => {
+export const createWallpaperRouter = (params: ConstructorParams) => {
   const router = Router();
   const controller = WallpaperController.createInstance(params);
 
-  router.post('/', multer.single('file'), (req: Request, res: Response) => controller.register(req, res));
   router.get('/:id/original', (req: Request, res: Response) => controller.getOriginalSize(req, res));
+
+  router.post('/', multer.single('wallpaper'), (req: Request, res: Response) => controller.register(req, res));
 
   return router;
 };

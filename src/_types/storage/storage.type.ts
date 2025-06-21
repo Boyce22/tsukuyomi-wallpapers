@@ -19,7 +19,7 @@ export interface IStorageService {
    *
    * @param {string} bucketName - Nome do bucket alvo da operação.
    * @param {string} [key] - (Opcional) Chave do objeto a ser deletado.
-   *                         Se não informado, o bucket completo será removido.
+   *                         Se omitido, o bucket completo será removido.
    * @returns {Promise<void>} Promessa que resolve quando a operação de exclusão for concluída.
    * @throws {Error} Caso o bucket ou objeto não exista ou a exclusão falhe.
    */

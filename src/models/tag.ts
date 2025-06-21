@@ -12,12 +12,14 @@ export class Tag {
 
   @Column({
     unique: true,
-    comment: 'Nome único da tag que identifica cada tag de forma exclusiva.',
+    length: 50,
+    comment: 'Nome único da tag que identifica cada tag de forma exclusiva (máx. 50 caracteres).',
   })
   name!: string;
 
   @Column({
-    comment: 'Descrição da tag, que explica seu significado ou contexto.',
+    length: 255,
+    comment: 'Descrição da tag, que explica seu significado ou contexto (máx. 255 caracteres).',
   })
   description!: string;
 

@@ -1,11 +1,11 @@
 import { Router, type Request, type Response } from 'express';
 
-import TagsController from '@/controllers/tags';
-import { ITagService } from '@/_types/tags/tags.type';
+import TagController from '@/controllers/tag';
+import { ITagService } from '@/_types/tags/tag.type';
 
-export const createTagsRouter = (tagService: ITagService) => {
+export const createTagsRouter = (service: ITagService) => {
   const router = Router();
-  const controller = TagsController.createInstance(tagService);
+  const controller = TagController.createInstance(service);
 
   router.post('/', (req: Request, res: Response) => controller.register(req, res));
   router.post('/find-by-ids', (req: Request, res: Response) => controller.findAllByIds(req, res));
