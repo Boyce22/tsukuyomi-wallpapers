@@ -23,6 +23,6 @@ const params = { tagService, wallpaperService, imageCompressService, storageServ
 
 router.use('/tags', createTagsRouter(tagService));
 router.use('/wallpapers', createWallpaperRouter(params));
-router.use('/storage', createStorageRouter(storageService))
+router.use('/storage', createStorageRouter(storageService));
 
 export default router;

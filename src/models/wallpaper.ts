@@ -28,7 +28,7 @@ export class Wallpaper {
   @Column({
     nullable: true,
     comment: 'Descrição detalhada do papel de parede (máx. 255 caracteres).',
-    length: 255
+    length: 255,
   })
   description?: string;
 
