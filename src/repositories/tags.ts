@@ -5,7 +5,8 @@ import AppDataSource from '@/config/database';
 import { CreateTag, ITagRepository } from '@/_types/tags/tags.type';
 
 /**
- * Repositório responsável por operações no banco de dados relacionadas à entidade Tag.
+ * Repositório responsável pelas operações de acesso a dados da entidade Tag.
+ * Implementa a interface ITagRepository.
  */
 export class TagRepository implements ITagRepository {
   private repository: Repository<Tag>;
@@ -19,7 +20,8 @@ export class TagRepository implements ITagRepository {
 
   /**
    * Cria uma nova instância do repositório de tags.
-   * @returns {TagRepository} Nova instância de TagRepository.
+   *
+   * @returns {TagRepository} Nova instância do repositório.
    */
   static createInstance(): TagRepository {
     return new TagRepository();
@@ -27,7 +29,8 @@ export class TagRepository implements ITagRepository {
 
   /**
    * Busca todas as tags que correspondem a uma lista de IDs.
-   * @param {string[]} ids - Lista de IDs das tags a serem buscadas.
+   *
+   * @param {string[]} ids - Array contendo os IDs das tags a serem buscadas.
    * @returns {Promise<Tag[]>} Promise que resolve com a lista de tags encontradas.
    */
   findAllByIds = async (ids: string[]): Promise<Tag[]> => {
@@ -36,13 +39,14 @@ export class TagRepository implements ITagRepository {
 
   /**
    * Registra uma nova tag no banco de dados.
-   * @param {CreateTag} dto - Objeto contendo os dados da tag a ser registrada.
-   * @returns {Promise<Tag>} Promise que resolve para a tag criada.
+   *
+   * @param {CreateTag} dto - Objeto com os dados para criação da tag.
+   * @returns {Promise<Tag>} Promise que resolve para a tag recém-criada.
    */
   register = async (dto: CreateTag): Promise<Tag> => {
     const tag = this.repository.create({
-      description: dto.description,
       name: dto.name,
+      description: dto.description,
     });
 
     return this.repository.save(tag);

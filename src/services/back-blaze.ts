@@ -1,104 +1,151 @@
-import path from 'path';
-import type { Request, Response } from 'express';
-import { TagNotFound } from '@/exceptions/tag-not-found';
-import { QualityCompress } from '@/_types/common/quality.enum';
-import { ITagService } from '@/_types/tags/tags.type';
-import { CreateWallpaperRequest, IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
-import { IImageCompressService } from '@/_types/compress/compress.type';
+import { IStorageService } from '@/_types/storage/storage.type';
 
-type ConstructorParams = {
-  wallpaperService: IWallpaperService;
-  tagService: ITagService;
-  imageCompressService: IImageCompressService;
-};
+import {
+  S3Client,
+  CreateBucketCommand,
+  DeleteBucketCommand,
+  DeleteObjectCommand,
+  PutObjectCommand,
+  ListBucketsCommand,
+} from '@aws-sdk/client-s3';
 
-class WallpaperController {
-  private wallpaperService: IWallpaperService;
-  private tagService: ITagService;
-  private imageCompressService: IImageCompressService;
+/**
+ * Serviço para armazenamento no Backblaze B2 via API compatível com S3.
+ * Implementa a interface IStorageService.
+ */
+class BackBlazeService implements IStorageService {
+  private s3: S3Client;
 
-  constructor({ wallpaperService, tagService, imageCompressService }: ConstructorParams) {
-    this.wallpaperService = wallpaperService;
-    this.tagService = tagService;
-    this.imageCompressService = imageCompressService;
-  }
-
-  static createInstance(params: ConstructorParams): WallpaperController {
-    return new WallpaperController(params);
+  /**
+   * Cria uma instância do serviço BackBlazeService.
+   * Inicializa o cliente S3 configurado para Backblaze B2.
+   */
+  constructor() {
+    this.s3 = this._build();
   }
 
   /**
-   * Gera dinamicamente o caminho para salvar a imagem comprimida,
-   * baseado no diretório definido por variável de ambiente.
+   * Cria e retorna uma nova instância do serviço BackBlazeService.
+   *
+   * @returns {BackBlazeService} Nova instância do serviço.
    */
-  private _generateOutputPath(): string {
-    const baseDir = process.env.COMPRESS_OUTPUT_PATH_DIR;
-
-    if (!baseDir) {
-      throw new Error('COMPRESS_OUTPUT_PATH_DIR is not defined in environment variables.');
-    }
-
-    const timestamp = Date.now();
-    const filename = `_COMPRESSED_${timestamp}.jpg`;
-
-    return path.join(baseDir, filename);
+  static createInstance(): BackBlazeService {
+    return new BackBlazeService();
   }
 
-  async getOriginalSize(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const originalUrl = await this.wallpaperService.getOriginalSize(id);
+  /**
+   * Inicializa a instância do S3 com as configurações do Backblaze B2.
+   *
+   * @private
+   * @returns {S3Client} Instância configurada do cliente S3.
+   * @throws {Error} Se alguma variável de ambiente necessária estiver ausente.
+   */
+  private _build(): S3Client {
+    const endpoint = process.env.B2_URL;
+    const region = process.env.B2_REGION;
+    const accessKeyId = process.env.B2_KEY_ID;
+    const secretAccessKey = process.env.B2_SECRET_KEY;
 
-      if (!originalUrl) {
-        res.status(404).json({ error: 'Wallpaper not found' });
-        return;
-      }
-
-      res.status(200).json({ url: originalUrl });
-    } catch (err) {
-      console.error('Error retrieving original wallpaper size:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
+    if (!endpoint || !region || !accessKeyId || !secretAccessKey) {
+      throw new Error('Missing Backblaze S3 configuration environment variables');
     }
+
+    return new S3Client({
+      endpoint,
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+      forcePathStyle: true,
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
+    });
   }
 
-  async register(req: Request, res: Response): Promise<void> {
+  /**
+   * Cria um bucket no Backblaze B2.
+   *
+   * @param {string} name - Nome do bucket a ser criado.
+   * @returns {Promise<void>} Promessa que resolve quando o bucket for criado.
+   * @throws {Error} Caso ocorra falha na criação do bucket.
+   */
+  async createBucket(name: string): Promise<void> {
     try {
-      const file = req.file;
-      if (!file) {
-        res.status(400).json({ error: 'File is required' });
-        return;
-      }
-
-      const dto: CreateWallpaperRequest['body'] =
-        typeof req.body.body === 'string' ? JSON.parse(req.body.body) : req.body;
-
-      if (!Array.isArray(dto.tagsIDs) || !dto.tagsIDs.length) {
-        res.status(400).json({ error: 'tagsIDs must be a non-empty array' });
-        return;
-      }
-
-      const tags = await this.tagService.findAllByIds(dto.tagsIDs);
-
-      const outputPath = this._generateOutputPath();
-
-      await this.imageCompressService.compress({
-        path: file.path,
-        outputPath,
-        quality: QualityCompress.MEDIUM,
-      });
-
-      const created = await this.wallpaperService.register(dto, tags);
-      res.status(201).json({ id: created.id });
+      await this.s3.send(new CreateBucketCommand({ Bucket: name }));
     } catch (error) {
-      if (error instanceof TagNotFound) {
-        res.status(404).json({ error: error.message });
-        return;
+      console.error(`Failed to create bucket "${name}":`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Recupera a lista de buckets disponíveis no Backblaze B2.
+   *
+   * @returns {Promise<string[]>} Promessa que resolve para uma lista de nomes de buckets.
+   * @throws {Error} Caso ocorra falha ao listar os buckets.
+   */
+  async getBuckets(): Promise<string[]> {
+    try {
+      const { Buckets } = await this.s3.send(new ListBucketsCommand({}));
+
+      if (!Buckets?.length) {
+        console.warn('No S3 buckets found.');
+        return [];
       }
 
-      console.error('Error in wallpaper registration:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      return Buckets.map((b) => b.Name).filter((name): name is string => !!name);
+    } catch (error) {
+      console.error('Failed to list buckets:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Deleta um bucket inteiro ou um objeto específico dentro do bucket.
+   *
+   * @param {string} bucketName - Nome do bucket alvo da operação.
+   * @param {string} [key] - (Opcional) Chave do objeto a ser deletado. Se omitido, o bucket será deletado.
+   * @returns {Promise<void>} Promessa que resolve quando a operação for concluída.
+   * @throws {Error} Caso a operação falhe.
+   */
+  async delete(bucketName: string, key?: string): Promise<void> {
+    try {
+      if (key) {
+        await this.s3.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
+      } else {
+        await this.s3.send(new DeleteBucketCommand({ Bucket: bucketName }));
+      }
+    } catch (error) {
+      console.error(`Failed to delete ${key ? `object "${key}"` : `bucket "${bucketName}"`}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Realiza o upload de um arquivo para o bucket especificado.
+   *
+   * @param {string} bucketName - Nome do bucket onde o arquivo será enviado.
+   * @param {string} key - Caminho ou identificador único do arquivo dentro do bucket.
+   * @param {Buffer} fileBuffer - Conteúdo do arquivo em formato Buffer.
+   * @returns {Promise<void>} Promessa que resolve quando o upload for concluído.
+   * @throws {Error} Caso o upload falhe.
+   */
+  async upload(bucketName: string, key: string, fileBuffer: Buffer): Promise<void> {
+    try {
+      await this.s3.send(
+        new PutObjectCommand({
+          Bucket: bucketName,
+          Key: key,
+          Body: fileBuffer,
+          ContentType: 'application/octet-stream',
+        }),
+      );
+    } catch (error) {
+      console.error(`Failed to upload file to bucket "${bucketName}" with key "${key}":`, error);
+      throw error;
     }
   }
 }
 
-export default WallpaperController;
+export default BackBlazeService;
