@@ -4,21 +4,21 @@ import { QualityCompress } from '@/_types/common/quality.enum';
 import { CompressResult, IImageCompressService, ImageCompressParams } from '@/_types/compress/compress.type';
 
 /**
- * Serviço responsável pela compressão de imagens em memória utilizando a biblioteca Sharp.
- * Implementa a interface IImageCompressService.
+ * Serviço responsável pela compressão de imagens utilizando a biblioteca Sharp.
+ * Implementa a interface {@link IImageCompressService}.
  */
 class ImageCompressService implements IImageCompressService {
   /**
    * Cria uma nova instância do serviço de compressão de imagens.
    *
-   * @returns {IImageCompressService} Nova instância do serviço.
+   * @returns {IImageCompressService} Instância do serviço.
    */
   public static createInstance(): IImageCompressService {
     return new ImageCompressService();
   }
 
   /**
-   * Mapeamento entre extensões de arquivos e funções que aplicam compressão com qualidade via Sharp.
+   * Mapeia formatos de imagem para funções de compressão Sharp, com nível de qualidade ajustável.
    *
    * @private
    * @type {Record<string, (sharpInstance: Sharp, quality: QualityCompress) => Sharp>}
@@ -32,13 +32,13 @@ class ImageCompressService implements IImageCompressService {
   };
 
   /**
-   * Realiza a compressão da imagem no caminho especificado, aplicando o nível de qualidade solicitado.
+   * Realiza a compressão de uma imagem existente, mantendo a original e gerando uma versão comprimida.
    *
-   * @param {ImageCompressParams} params - Parâmetros para a compressão.
-   * @param {string} params.path - Caminho absoluto da imagem original.
-   * @param {QualityCompress} [params.quality=QualityCompress.MEDIUM] - Nível de qualidade para compressão.
-   * @returns {Promise<CompressResult>} Promessa que resolve com os dados da imagem original e comprimida.
-   * @throws {Error} Lança erro se o formato da imagem não for suportado ou se a compressão falhar.
+   * @param {ImageCompressParams} params - Parâmetros para a operação de compressão.
+   * @param {string} params.path - Caminho absoluto do arquivo de imagem original.
+   * @param {QualityCompress} [params.quality=QualityCompress.MEDIUM] - Nível de compressão a ser aplicado.
+   * @returns {Promise<CompressResult>} Objeto contendo os buffers e metadados da imagem original e comprimida.
+   * @throws {Error} Se o formato da imagem for inválido ou a compressão falhar.
    */
   async compress({ path: imagePath, quality = QualityCompress.MEDIUM }: ImageCompressParams): Promise<CompressResult> {
     try {
@@ -74,11 +74,11 @@ class ImageCompressService implements IImageCompressService {
   }
 
   /**
-   * Extrai a extensão do arquivo, em minúsculas e sem o ponto.
+   * Extrai a extensão do arquivo de imagem com base no caminho informado.
    *
    * @private
    * @param {string} filePath - Caminho do arquivo.
-   * @returns {string} Extensão do arquivo (ex: "jpg", "png").
+   * @returns {string} Extensão do arquivo (ex: "jpg", "png", etc.).
    */
   private _getExtension(filePath: string): string {
     return path.extname(filePath).replace('.', '').toLowerCase();

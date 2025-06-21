@@ -2,25 +2,26 @@ import { CreateTag, ITagService } from '@/_types/tags/tag.type';
 import type { Request, Response } from 'express';
 
 /**
- * Controller responsável por lidar com requisições relacionadas a tags.
+ * Controller responsável por lidar com requisições relacionadas à entidade Tag.
+ * Utiliza os métodos definidos em {@link ITagService}.
  */
 class TagController {
   private readonly service: ITagService;
 
   /**
-   * Cria uma nova instância do TagController.
+   * Cria uma nova instância do {@link TagController}.
    *
-   * @param service - Serviço que implementa a lógica de negócios para tags.
+   * @param {ITagService} service - Serviço responsável pela lógica de negócios de tags.
    */
   constructor(service: ITagService) {
     this.service = service;
   }
 
   /**
-   * Método auxiliar para instanciar o controller.
+   * Cria e retorna uma nova instância do {@link TagController}.
    *
-   * @param service - Instância do serviço de tags.
-   * @returns Nova instância de TagController.
+   * @param {ITagService} service - Instância do serviço de tags.
+   * @returns {TagController} Nova instância do controller.
    */
   static createInstance(service: ITagService): TagController {
     return new TagController(service);
@@ -29,9 +30,11 @@ class TagController {
   /**
    * Registra uma nova tag no sistema.
    *
-   * @param req - Requisição HTTP contendo os dados da tag no corpo.
-   * @param res - Resposta HTTP que retorna o ID da tag criada.
-   * @returns Promise que resolve quando a operação é concluída.
+   * @async
+   * @param {Request} req - Objeto da requisição HTTP contendo os dados da nova tag no corpo.
+   * @param {Response} res - Objeto da resposta HTTP. Retorna o ID da tag criada ou erro.
+   * @returns {Promise<void>} Promise resolvida ao fim da operação.
+   * @throws {Error} Quando ocorre falha na criação da tag.
    */
   async register(req: Request, res: Response): Promise<void> {
     try {
@@ -47,11 +50,13 @@ class TagController {
   }
 
   /**
-   * Busca múltiplas tags com base em uma lista de IDs fornecida.
+   * Busca uma lista de tags com base em um array de IDs fornecido.
    *
-   * @param req - Requisição HTTP contendo o array de IDs no corpo (`req.body.ids`).
-   * @param res - Resposta HTTP com as tags encontradas.
-   * @returns Promise que resolve quando a operação é concluída.
+   * @async
+   * @param {Request} req - Objeto da requisição HTTP contendo `ids` no corpo.
+   * @param {Response} res - Objeto da resposta HTTP com a lista de tags encontradas ou erro.
+   * @returns {Promise<void>} Promise resolvida ao fim da operação.
+   * @throws {Error} Quando ocorre falha na busca ou os dados são inválidos.
    */
   async findAllByIds(req: Request, res: Response): Promise<void> {
     try {

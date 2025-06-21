@@ -16,7 +16,9 @@ type ConstructorParams = {
 };
 
 /**
- * Controller responsável por lidar com requisições relacionadas a wallpapers.
+ * Controller responsável por lidar com requisições relacionadas à entidade Wallpaper.
+ * Utiliza os serviços definidos por {@link IWallpaperService}, {@link ITagService},
+ * {@link IImageCompressService} e {@link IStorageService}.
  */
 class WallpaperController {
   private readonly wallpaperService: IWallpaperService;
@@ -26,8 +28,9 @@ class WallpaperController {
   private readonly bucket: string;
 
   /**
-   * Cria uma instância de WallpaperController.
-   * @param params - Serviços injetados no controller.
+   * Cria uma instância de {@link WallpaperController}.
+   *
+   * @param {ConstructorParams} params - Objetos de serviço injetados no controller.
    */
   constructor({ wallpaperService, tagService, imageCompressService, storageService }: ConstructorParams) {
     this.wallpaperService = wallpaperService;
@@ -37,6 +40,23 @@ class WallpaperController {
     this.bucket = this._resolveBucket();
   }
 
+  /**
+   * Cria e retorna uma nova instância de {@link WallpaperController}.
+   *
+   * @param {ConstructorParams} params - Dependências necessárias para instanciar o controller.
+   * @returns {WallpaperController} Nova instância do controller.
+   */
+  static createInstance(params: ConstructorParams): WallpaperController {
+    return new WallpaperController(params);
+  }
+
+  /**
+   * Resolve o nome do bucket a partir da variável de ambiente.
+   *
+   * @private
+   * @returns {string} Nome do bucket de armazenamento.
+   * @throws {Error} Se a variável de ambiente `STORAGE_WALLPAPER_BUCKET` não estiver definida.
+   */
   private _resolveBucket(): string {
     const bucket = process.env.STORAGE_WALLPAPER_BUCKET;
     if (!bucket) {
@@ -46,14 +66,13 @@ class WallpaperController {
   }
 
   /**
-   * Cria uma nova instância do WallpaperController.
-   */
-  static createInstance(params: ConstructorParams): WallpaperController {
-    return new WallpaperController(params);
-  }
-
-  /**
-   * Retorna a URL da imagem original com base no ID do wallpaper.
+   * Recupera a URL da imagem original de um wallpaper específico.
+   *
+   * @async
+   * @param {Request} req - Objeto da requisição HTTP contendo o `id` do wallpaper nos parâmetros.
+   * @param {Response} res - Objeto da resposta HTTP. Retorna a URL ou erro.
+   * @returns {Promise<void>} Promise resolvida quando a operação for concluída.
+   * @throws {Error} Caso ocorra falha na consulta ou no processamento da URL.
    */
   async getOriginalSize(req: Request, res: Response): Promise<void> {
     try {
@@ -73,7 +92,14 @@ class WallpaperController {
   }
 
   /**
-   * Registra um novo wallpaper com as tags associadas, realiza compressão e armazena os arquivos.
+   * Registra um novo wallpaper com compressão de imagem e armazenamento em bucket.
+   *
+   * @async
+   * @param {CreateWallpaperRequest} req - Objeto da requisição HTTP contendo o arquivo e os dados do wallpaper.
+   * @param {Response} res - Objeto da resposta HTTP. Retorna o ID do wallpaper criado ou erro.
+   * @returns {Promise<void>} Promise resolvida após o processo de registro.
+   * @throws {TagNotFound} Quando uma ou mais tags informadas não são encontradas.
+   * @throws {Error} Caso ocorra qualquer outra falha no processo de registro ou upload.
    */
   async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
     try {
@@ -98,7 +124,6 @@ class WallpaperController {
         quality: QualityCompress.MEDIUM,
       });
 
-      // Salva as imagens original e comprimida no bucket
       await Promise.all([
         this.storageService.upload(this.bucket, `/original/${file.filename}`, original.buffer),
         this.storageService.upload(this.bucket, `/compressed/${file.filename}`, compressed.buffer),

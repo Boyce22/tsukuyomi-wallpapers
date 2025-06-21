@@ -5,8 +5,7 @@ import { CreateTag, ITagRepository, ITagService } from '@/_types/tags/tag.type';
 
 /**
  * Serviço responsável pela lógica de negócio relacionada à entidade Tag.
- *
- * Implementa a interface ITagService.
+ * Implementa a interface {@link ITagService}.
  */
 class TagService implements ITagService {
   private readonly repository: ITagRepository;

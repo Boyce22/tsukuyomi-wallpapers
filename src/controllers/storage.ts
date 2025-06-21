@@ -2,41 +2,42 @@ import type { Request, Response } from 'express';
 import { IStorageService } from '@/_types/storage/storage.type';
 
 /**
- * Controller responsável por gerenciar operações de armazenamento.
+ * Controller responsável por lidar com requisições relacionadas ao serviço de armazenamento.
+ * Implementa operações expostas pela interface {@link IStorageService}.
  */
 class StorageController {
   private readonly service: IStorageService;
 
   /**
-   * Cria uma instância do StorageController.
+   * Cria uma nova instância do {@link StorageController}.
    *
-   * @param {IStorageService} service - Instância do serviço de armazenamento.
+   * @param {IStorageService} service - Serviço de armazenamento a ser utilizado pelo controller.
    */
   constructor(service: IStorageService) {
     this.service = service;
   }
 
   /**
-   * Cria uma nova instância do controller.
+   * Cria uma nova instância do {@link StorageController} com o serviço injetado.
    *
-   * @static
-   * @param {IStorageService} service - Serviço para operações de armazenamento.
-   * @returns {StorageController} Instância do controller.
+   * @param {IStorageService} service - Instância do serviço de armazenamento.
+   * @returns {StorageController} Instância inicializada do controller.
    */
   static createInstance(service: IStorageService): StorageController {
     return new StorageController(service);
   }
 
   /**
-   * Endpoint para listar todos os buckets disponíveis.
+   * Lista todos os buckets disponíveis no serviço de armazenamento.
    *
    * @async
    * @param {Request} req - Objeto da requisição HTTP (não utilizado).
-   * @param {Response} res - Objeto da resposta HTTP.
-   * @returns {Promise<void>} Retorna JSON com a lista de buckets ou um erro.
+   * @param {Response} res - Objeto da resposta HTTP. Retorna status 200 com a lista de buckets,
+   * ou status 400/500 em caso de erro.
+   * @returns {Promise<void>} Promise resolvida quando a operação for concluída.
    * @throws {Error} Quando ocorre falha na comunicação com o serviço de armazenamento.
    */
-  getBuckets = async (req: Request, res: Response): Promise<void> => {
+  async getBuckets(req: Request, res: Response): Promise<void> {
     try {
       const buckets = await this.service.getBuckets();
       res.status(200).json({ buckets });
@@ -46,7 +47,7 @@ class StorageController {
         error: error instanceof Error ? error.message : 'Erro interno do servidor',
       });
     }
-  };
+  }
 }
 
 export default StorageController;
