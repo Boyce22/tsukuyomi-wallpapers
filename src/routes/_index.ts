@@ -10,6 +10,7 @@ import { createTagsRouter } from './tags';
 import { createWallpapersRouter } from '@/routes/wallpapers';
 import ImageCompressService from '@/services/image-compress';
 import BackBlazeService from '@/services/back-blaze';
+import { createStorageRouter } from './storage';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ const params = { tagService, wallpaperService, imageCompressService, storageServ
 
 router.use('/tags', createTagsRouter(tagService));
 router.use('/wallpapers', createWallpapersRouter(params));
+router.use('/storage', createStorageRouter(storageService))
 
 export default router;
