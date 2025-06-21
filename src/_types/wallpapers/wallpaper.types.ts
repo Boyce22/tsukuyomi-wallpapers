@@ -4,32 +4,26 @@ import { Wallpaper } from '@/models/wallpaper';
 
 /**
  * DTO para criação de um novo wallpaper.
- * Representa os dados necessários para registrar um wallpaper no sistema.
+ *
+ * @typedef {Object} CreateWallpaper
+ * @property {string} name - Nome do wallpaper.
+ * @property {string} [description] - Descrição opcional do wallpaper.
+ * @property {boolean} [isMature] - Indica se o wallpaper possui conteúdo adulto.
+ * @property {string[]} tagsIDs - IDs das tags associadas ao wallpaper.
  */
 export interface CreateWallpaper {
-  /**
-   * Nome do wallpaper.
-   */
   name: string;
-
-  /**
-   * Descrição opcional do wallpaper.
-   */
   description?: string;
-
-  /**
-   * Indica se o wallpaper possui conteúdo adulto.
-   */
   isMature?: boolean;
-
-  /**
-   * IDs das tags associadas ao wallpaper.
-   */
   tagsIDs: string[];
 }
 
 /**
- * Extensão da interface Request do Express, com body tipado e arquivo via Multer.
+ * Extensão da interface Request do Express para criação de wallpaper,
+ * incluindo tipagem para body e arquivo recebido via Multer.
+ *
+ * @interface CreateWallpaperRequest
+ * @extends {Request}
  */
 export interface CreateWallpaperRequest extends Request {
   /**
@@ -38,55 +32,59 @@ export interface CreateWallpaperRequest extends Request {
   file?: Express.Multer.File;
 
   /**
-   * Corpo da requisição contendo os dados do wallpaper.
+   * Corpo da requisição com dados do wallpaper.
    */
   body: CreateWallpaper;
 }
 
 /**
- * Interface da camada de serviço responsável pelas operações de negócio relacionadas a wallpapers.
+ * Interface da camada de serviço para operações de negócio relacionadas a wallpapers.
+ *
+ * @interface IWallpaperService
  */
 export interface IWallpaperService {
   /**
-   * Obtém a URL da imagem em tamanho original a partir do ID do wallpaper.
+   * Obtém a URL da imagem original do wallpaper pelo seu ID.
    *
    * @param {string} id - ID do wallpaper.
-   * @returns {Promise<string>} Promessa que resolve para a URL da imagem original.
-   * @throws {UrlNotProvided} Se o ID não for fornecido (null, undefined ou string vazia).
-   * @throws {UrlNotFound} Se a URL original não for localizada para o ID informado.
+   * @returns {Promise<string>} URL da imagem original.
+   * @throws {UrlNotProvided} Caso o ID seja inválido, nulo ou vazio.
+   * @throws {UrlNotFound} Caso não seja encontrada URL original para o ID.
    */
   getOriginalSize(id: string): Promise<string>;
 
   /**
-   * Registra um novo wallpaper com as tags associadas.
+   * Registra um novo wallpaper no sistema com as tags associadas.
    *
    * @param {CreateWallpaper} dto - Dados para criação do wallpaper.
-   * @param {Tag[]} tags - Lista de tags a serem associadas.
-   * @returns {Promise<Wallpaper>} Promessa que resolve para o wallpaper registrado.
+   * @param {Tag[]} tags - Lista de tags associadas ao wallpaper.
+   * @returns {Promise<Wallpaper>} Wallpaper recém-registrado.
    * @throws {Error} Caso ocorra falha no registro.
    */
   register(dto: CreateWallpaper, tags: Tag[]): Promise<Wallpaper>;
 }
 
 /**
- * Interface da camada de repositório responsável pela persistência de dados dos wallpapers.
+ * Interface da camada de repositório responsável pela persistência dos wallpapers.
+ *
+ * @interface IWallpaperRepository
  */
 export interface IWallpaperRepository {
   /**
    * Busca a URL da imagem original pelo ID do wallpaper.
    *
    * @param {string} id - ID do wallpaper.
-   * @returns {Promise<string | null>} Promessa que resolve para a URL da imagem original,
-   * ou null caso não seja encontrada.
+   * @returns {Promise<string | null>} URL da imagem original ou null se não encontrada.
    */
   findUrlWithOriginalSizeById(id: string): Promise<string | null>;
 
   /**
-   * Registra um novo wallpaper e associa as tags.
+   * Registra um novo wallpaper e associa as tags relacionadas.
    *
    * @param {CreateWallpaper} dto - Dados para criação do wallpaper.
-   * @param {Tag[]} tags - Tags associadas ao wallpaper.
-   * @returns {Promise<Wallpaper>} Promessa que resolve para o wallpaper criado.
+   * @param {Tag[]} tags - Lista de tags associadas.
+   * @returns {Promise<Wallpaper>} Wallpaper criado.
+   * @throws {Error} Caso ocorra falha ao salvar o wallpaper.
    */
   register(dto: CreateWallpaper, tags: Tag[]): Promise<Wallpaper>;
 }

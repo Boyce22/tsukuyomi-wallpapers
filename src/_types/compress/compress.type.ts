@@ -13,31 +13,30 @@ export type ImageCompressParams = {
 };
 
 /**
- * Resultado da operação de compressão de imagem, contendo informações
- * da imagem original e da imagem comprimida.
+ * Dados da imagem, contendo caminho, tamanho e conteúdo em buffer.
+ *
+ * @typedef {Object} ImageData
+ * @property {string} path - Caminho da imagem.
+ * @property {number} size - Tamanho da imagem em bytes.
+ * @property {Buffer} buffer - Conteúdo da imagem em buffer.
+ */
+type ImageData = {
+  path: string;
+  size: number;
+  buffer: Buffer;
+};
+
+/**
+ * Resultado da operação de compressão de imagem, contendo
+ * dados da imagem original e da imagem comprimida.
  *
  * @typedef {Object} CompressResult
- * @property {Object} original - Dados da imagem original.
- * @property {string} original.path - Caminho da imagem original.
- * @property {number} original.size - Tamanho da imagem original em bytes.
- * @property {Buffer} original.buffer - Conteúdo da imagem original em formato Buffer.
- *
- * @property {Object} compressed - Dados da imagem comprimida.
- * @property {string} compressed.path - Caminho da imagem comprimida.
- * @property {number} compressed.size - Tamanho da imagem comprimida em bytes.
- * @property {Buffer} compressed.buffer - Conteúdo da imagem comprimida em formato Buffer.
+ * @property {ImageData} original - Dados da imagem original.
+ * @property {ImageData} compressed - Dados da imagem comprimida.
  */
 export type CompressResult = {
-  original: {
-    path: string;
-    size: number;
-    buffer: Buffer;
-  };
-  compressed: {
-    path: string;
-    size: number;
-    buffer: Buffer;
-  };
+  original: ImageData;
+  compressed: ImageData;
 };
 
 /**
@@ -53,7 +52,7 @@ export interface IImageCompressService {
    *
    * @param {ImageCompressParams} params - Parâmetros da compressão, incluindo caminho da imagem e qualidade.
    * @returns {Promise<CompressResult>} Promessa que resolve com os dados da imagem original e comprimida.
-   * @throws Pode lançar erro caso a compressão falhe ou o arquivo não seja encontrado.
+   * @throws {Error} Caso ocorra falha na compressão ou o arquivo não seja encontrado.
    */
   compress(params: ImageCompressParams): Promise<CompressResult>;
 }

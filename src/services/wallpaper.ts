@@ -7,7 +7,7 @@ import { CreateWallpaper, IWallpaperRepository, IWallpaperService } from '@/_typ
 
 /**
  * Serviço responsável pela lógica de negócio relacionada a wallpapers.
- * Implementa a interface IWallpaperService.
+ * Implementa a interface {@link IWallpaperService}.
  */
 class WallpaperService implements IWallpaperService {
   private readonly repository: IWallpaperRepository;

@@ -5,14 +5,14 @@ import AppDataSource from '@/config/database';
 import { CreateTag, ITagRepository } from '@/_types/tags/tag.type';
 
 /**
- * Repositório responsável pelas operações de acesso a dados da entidade Tag.
- * Implementa a interface ITagRepository.
+ * Repositório responsável pelas operações de persistência da entidade {@link Tag}.
+ * Implementa a interface {@link ITagRepository}.
  */
 export class TagRepository implements ITagRepository {
   private repository: Repository<Tag>;
 
   /**
-   * Inicializa o repositório TypeORM para a entidade Tag.
+   * Cria uma nova instância do {@link TagRepository} e inicializa o repositório do TypeORM.
    */
   constructor() {
     this.repository = AppDataSource.getRepository(Tag);
@@ -21,17 +21,18 @@ export class TagRepository implements ITagRepository {
   /**
    * Cria uma nova instância do repositório de tags.
    *
-   * @returns {TagRepository} Nova instância do repositório.
+   * @returns {TagRepository} Nova instância de {@link TagRepository}.
    */
   static createInstance(): TagRepository {
     return new TagRepository();
   }
 
   /**
-   * Busca todas as tags que correspondem a uma lista de IDs.
+   * Busca todas as tags que correspondem a uma lista de IDs fornecida.
    *
-   * @param {string[]} ids - Array contendo os IDs das tags a serem buscadas.
-   * @returns {Promise<Tag[]>} Promise que resolve com a lista de tags encontradas.
+   * @param {string[]} ids - Lista de IDs das tags a serem buscadas.
+   * @returns {Promise<Tag[]>} Promise resolvida com as tags encontradas.
+   * @throws {Error} Caso ocorra falha na consulta ao banco de dados.
    */
   async findAllByIds(ids: string[]): Promise<Tag[]> {
     return this.repository.find({ where: { id: In(ids) } });
@@ -40,8 +41,9 @@ export class TagRepository implements ITagRepository {
   /**
    * Registra uma nova tag no banco de dados.
    *
-   * @param {CreateTag} dto - Objeto com os dados para criação da tag.
-   * @returns {Promise<Tag>} Promise que resolve para a tag recém-criada.
+   * @param {CreateTag} dto - Objeto contendo os dados da tag a ser criada.
+   * @returns {Promise<Tag>} Promise resolvida com a entidade {@link Tag} criada.
+   * @throws {Error} Caso ocorra falha ao salvar a tag no banco de dados.
    */
   async register(dto: CreateTag): Promise<Tag> {
     const tag = this.repository.create({

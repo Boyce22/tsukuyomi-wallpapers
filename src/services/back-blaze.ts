@@ -10,35 +10,39 @@ import {
 } from '@aws-sdk/client-s3';
 
 /**
- * Serviço para armazenamento no Backblaze B2 via API compatível com S3.
- * Implementa a interface IStorageService.
+ * Serviço responsável por interagir com o armazenamento da Backblaze B2
+ * através da API compatível com o protocolo S3.
+ *
+ * Implementa a interface {@link IStorageService}.
  */
 class BackBlazeService implements IStorageService {
   private s3: S3Client;
 
   /**
-   * Cria uma instância do serviço BackBlazeService.
-   * Inicializa o cliente S3 configurado para Backblaze B2.
+   * Cria uma nova instância de {@link BackBlazeService}.
+   * Inicializa internamente o cliente S3 configurado para a Backblaze B2.
+   *
+   * @throws {Error} Se variáveis de ambiente obrigatórias estiverem ausentes.
    */
   constructor() {
     this.s3 = this._build();
   }
 
   /**
-   * Cria e retorna uma nova instância do serviço BackBlazeService.
+   * Cria uma nova instância estática de {@link BackBlazeService}.
    *
-   * @returns {BackBlazeService} Nova instância do serviço.
+   * @returns {BackBlazeService} Instância do serviço configurada.
    */
   static createInstance(): BackBlazeService {
     return new BackBlazeService();
   }
 
   /**
-   * Inicializa a instância do S3 com as configurações do Backblaze B2.
+   * Inicializa o cliente S3 com as configurações da Backblaze.
    *
    * @private
    * @returns {S3Client} Instância configurada do cliente S3.
-   * @throws {Error} Se alguma variável de ambiente necessária estiver ausente.
+   * @throws {Error} Se variáveis de ambiente necessárias estiverem ausentes.
    */
   private _build(): S3Client {
     const endpoint = process.env.B2_URL;
@@ -64,11 +68,11 @@ class BackBlazeService implements IStorageService {
   }
 
   /**
-   * Cria um bucket no Backblaze B2.
+   * Cria um novo bucket na Backblaze B2.
    *
    * @param {string} name - Nome do bucket a ser criado.
-   * @returns {Promise<void>} Promessa que resolve quando o bucket for criado.
-   * @throws {Error} Caso ocorra falha na criação do bucket.
+   * @returns {Promise<void>} Promise resolvida quando a operação for concluída.
+   * @throws {Error} Caso a criação do bucket falhe.
    */
   async createBucket(name: string): Promise<void> {
     try {
@@ -80,10 +84,10 @@ class BackBlazeService implements IStorageService {
   }
 
   /**
-   * Recupera a lista de buckets disponíveis no Backblaze B2.
+   * Lista todos os buckets disponíveis no serviço Backblaze.
    *
-   * @returns {Promise<string[]>} Promessa que resolve para uma lista de nomes de buckets.
-   * @throws {Error} Caso ocorra falha ao listar os buckets.
+   * @returns {Promise<string[]>} Lista de nomes de buckets.
+   * @throws {Error} Caso a operação de listagem falhe.
    */
   async getBuckets(): Promise<string[]> {
     try {
@@ -102,11 +106,12 @@ class BackBlazeService implements IStorageService {
   }
 
   /**
-   * Deleta um bucket inteiro ou um objeto específico dentro do bucket.
+   * Remove um bucket inteiro ou um objeto específico dentro dele.
    *
-   * @param {string} bucketName - Nome do bucket alvo da operação.
-   * @param {string} [key] - (Opcional) Chave do objeto a ser deletado. Se omitido, o bucket será deletado.
-   * @returns {Promise<void>} Promessa que resolve quando a operação for concluída.
+   * @param {string} bucketName - Nome do bucket alvo.
+   * @param {string} [key] - (Opcional) Caminho do objeto a ser removido.
+   * Se omitido, o bucket inteiro será deletado.
+   * @returns {Promise<void>} Promise resolvida após a remoção.
    * @throws {Error} Caso a operação falhe.
    */
   async delete(bucketName: string, key?: string): Promise<void> {
@@ -125,11 +130,11 @@ class BackBlazeService implements IStorageService {
   /**
    * Realiza o upload de um arquivo para o bucket especificado.
    *
-   * @param {string} bucketName - Nome do bucket onde o arquivo será enviado.
-   * @param {string} key - Caminho ou identificador único do arquivo dentro do bucket.
-   * @param {Buffer} fileBuffer - Conteúdo do arquivo em formato Buffer.
-   * @returns {Promise<void>} Promessa que resolve quando o upload for concluído.
-   * @throws {Error} Caso o upload falhe.
+   * @param {string} bucketName - Nome do bucket de destino.
+   * @param {string} key - Caminho único do objeto no bucket.
+   * @param {Buffer} fileBuffer - Conteúdo do arquivo a ser enviado.
+   * @returns {Promise<void>} Promise resolvida quando o upload for finalizado.
+   * @throws {Error} Caso a operação falhe.
    */
   async upload(bucketName: string, key: string, fileBuffer: Buffer): Promise<void> {
     try {
