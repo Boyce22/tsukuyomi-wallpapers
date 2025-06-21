@@ -16,7 +16,7 @@ const router = Router();
 const tagService = TagService.createInstance(TagRepository.createInstance());
 const wallpaperService = WallpaperService.createInstance(WallpaperRepository.createInstance());
 const imageCompressService = ImageCompressService.createInstance();
-const storageService = BackBlazeService.createInstance()
+const storageService = BackBlazeService.createInstance();
 
 const params = { tagService, wallpaperService, imageCompressService, storageService };
 

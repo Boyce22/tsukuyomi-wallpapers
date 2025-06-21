@@ -16,51 +16,44 @@ type ConstructorParams = {
 };
 
 /**
- * Controller responsável por lidar com requisições relacionadas a wallpapers
+ * Controller responsável por lidar com requisições relacionadas a wallpapers.
  */
 class WallpaperController {
-  private wallpaperService: IWallpaperService;
-  private tagService: ITagService;
-  private imageCompressService: IImageCompressService;
-  private storageService: IStorageService;
-  private bucket: string;
+  private readonly wallpaperService: IWallpaperService;
+  private readonly tagService: ITagService;
+  private readonly imageCompressService: IImageCompressService;
+  private readonly storageService: IStorageService;
+  private readonly bucket: string;
 
   /**
-   * Cria uma instância de WallpaperController
-   * @param {ConstructorParams} params - Serviços necessários para o controller
+   * Cria uma instância de WallpaperController.
+   * @param params - Serviços injetados no controller.
    */
   constructor({ wallpaperService, tagService, imageCompressService, storageService }: ConstructorParams) {
     this.wallpaperService = wallpaperService;
     this.tagService = tagService;
     this.imageCompressService = imageCompressService;
     this.storageService = storageService;
-    this.bucket = this._build();
+    this.bucket = this._resolveBucket();
   }
 
-  private _build(): string {
+  private _resolveBucket(): string {
     const bucket = process.env.STORAGE_WALLPAPER_BUCKET;
-
     if (!bucket) {
-      throw new Error('Missing Wallpaper S3 configuration environment variables');
+      throw new Error('Missing environment variable: STORAGE_WALLPAPER_BUCKET');
     }
-
     return bucket;
   }
 
   /**
-   * Cria uma nova instância de WallpaperController
-   * @param {ConstructorParams} params - Serviços necessários para o controller
-   * @returns {WallpaperController} Instância do controller
+   * Cria uma nova instância do WallpaperController.
    */
   static createInstance(params: ConstructorParams): WallpaperController {
     return new WallpaperController(params);
   }
 
   /**
-   * Retorna a URL da imagem em seu tamanho original a partir do ID do wallpaper
-   * @param {Request} req - Requisição Express contendo o ID do wallpaper nos parâmetros
-   * @param {Response} res - Resposta Express com a URL da imagem ou erro
-   * @returns {Promise<void>}
+   * Retorna a URL da imagem original com base no ID do wallpaper.
    */
   async getOriginalSize(req: Request, res: Response): Promise<void> {
     try {
@@ -74,16 +67,13 @@ class WallpaperController {
 
       res.status(200).json({ url: originalUrl });
     } catch (err) {
-      console.error('Error retrieving original wallpaper size:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error retrieving original wallpaper URL:', err);
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
   /**
-   * Registra um novo wallpaper, realiza compressão da imagem e associa tags
-   * @param {CreateWallpaperRequest} req - Requisição contendo arquivo e corpo com os dados do wallpaper
-   * @param {Response} res - Resposta com o ID do wallpaper criado ou erro
-   * @returns {Promise<void>}
+   * Registra um novo wallpaper com as tags associadas, realiza compressão e armazena os arquivos.
    */
   async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
     try {
@@ -96,21 +86,22 @@ class WallpaperController {
 
       const dto: CreateWallpaper = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-      if (!Array.isArray(dto.tagsIDs) || !dto.tagsIDs.length) {
-        res.status(400).json({ error: 'tagsIDs must be a non-empty array' });
+      if (!Array.isArray(dto.tagsIDs) || dto.tagsIDs.length === 0) {
+        res.status(400).json({ error: '`tagsIDs` must be a non-empty array' });
         return;
       }
 
       const tags = await this.tagService.findAllByIds(dto.tagsIDs);
 
-      const { compressed, original } = await this.imageCompressService.compress({
+      const { original, compressed } = await this.imageCompressService.compress({
         path: file.path,
         quality: QualityCompress.MEDIUM,
       });
 
+      // Salva as imagens original e comprimida no bucket
       await Promise.all([
-        this.storageService.upload(this.bucket, `/original/${file.filename}`, compressed.buffer),
-        this.storageService.upload(this.bucket, `/compressed/${file.filename}`, original.buffer),
+        this.storageService.upload(this.bucket, `/original/${file.filename}`, original.buffer),
+        this.storageService.upload(this.bucket, `/compressed/${file.filename}`, compressed.buffer),
       ]);
 
       const created = await this.wallpaperService.register(dto, tags);
@@ -122,8 +113,8 @@ class WallpaperController {
         return;
       }
 
-      console.error('Error in wallpaper registration:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error registering wallpaper:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 }
