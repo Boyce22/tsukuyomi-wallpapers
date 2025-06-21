@@ -1,14 +1,14 @@
-import { CreateTag, ITagService } from '@/_types/tags/tags.type';
+import { CreateTag, ITagService } from '@/_types/tags/tag.type';
 import type { Request, Response } from 'express';
 
 /**
  * Controller responsável por lidar com requisições relacionadas a tags.
  */
-class TagsController {
+class TagController {
   private readonly service: ITagService;
 
   /**
-   * Cria uma nova instância do TagsController.
+   * Cria uma nova instância do TagController.
    *
    * @param service - Serviço que implementa a lógica de negócios para tags.
    */
@@ -20,10 +20,10 @@ class TagsController {
    * Método auxiliar para instanciar o controller.
    *
    * @param service - Instância do serviço de tags.
-   * @returns Nova instância de TagsController.
+   * @returns Nova instância de TagController.
    */
-  static createInstance(service: ITagService): TagsController {
-    return new TagsController(service);
+  static createInstance(service: ITagService): TagController {
+    return new TagController(service);
   }
 
   /**
@@ -33,7 +33,7 @@ class TagsController {
    * @param res - Resposta HTTP que retorna o ID da tag criada.
    * @returns Promise que resolve quando a operação é concluída.
    */
-  register = async (req: Request, res: Response): Promise<void> => {
+  async register(req: Request, res: Response): Promise<void> {
     try {
       const dto: CreateTag = req.body;
       const tagId = await this.service.register(dto);
@@ -44,7 +44,7 @@ class TagsController {
         error: error instanceof Error ? error.message : 'Erro interno do servidor',
       });
     }
-  };
+  }
 
   /**
    * Busca múltiplas tags com base em uma lista de IDs fornecida.
@@ -53,7 +53,7 @@ class TagsController {
    * @param res - Resposta HTTP com as tags encontradas.
    * @returns Promise que resolve quando a operação é concluída.
    */
-  findAllByIds = async (req: Request, res: Response): Promise<void> => {
+  async findAllByIds(req: Request, res: Response): Promise<void> {
     try {
       const ids = req.body?.ids;
 
@@ -70,7 +70,7 @@ class TagsController {
         error: error instanceof Error ? error.message : 'Erro interno do servidor',
       });
     }
-  };
+  }
 }
 
-export default TagsController;
+export default TagController;

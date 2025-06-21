@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 
-import { ITagService } from '@/_types/tags/tags.type';
+import { ITagService } from '@/_types/tags/tag.type';
 import WallpaperController from '@/controllers/wallpapers';
 import { IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
 import { IImageCompressService } from '@/_types/compress/compress.type';
@@ -14,7 +14,7 @@ type ConstructorParams = {
   storageService: IStorageService;
 };
 
-export const createWallpapersRouter = (params: ConstructorParams) => {
+export const createWallpaperRouter = (params: ConstructorParams) => {
   const router = Router();
   const controller = WallpaperController.createInstance(params);
 

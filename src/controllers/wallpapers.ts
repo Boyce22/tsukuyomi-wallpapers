@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import type { Request, Response } from 'express';
 import { TagNotFound } from '@/exceptions/tag-not-found';
 import { QualityCompress } from '@/_types/common/quality.enum';
-import { ITagService } from '@/_types/tags/tags.type';
+import { ITagService } from '@/_types/tags/tag.type';
 import { CreateWallpaper, CreateWallpaperRequest, IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
 import { IImageCompressService } from '@/_types/compress/compress.type';
 import { IStorageService } from '@/_types/storage/storage.type';
