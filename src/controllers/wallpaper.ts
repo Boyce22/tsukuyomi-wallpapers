@@ -75,20 +75,15 @@ class WallpaperController {
    * @throws {Error} Caso ocorra falha na consulta ou no processamento da URL.
    */
   async getOriginalSize(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const originalUrl = await this.wallpaperService.getOriginalSize(id);
+    const { id } = req.params;
+    const originalUrl = await this.wallpaperService.getOriginalSize(id);
 
-      if (!originalUrl) {
-        res.status(404).json({ error: 'Wallpaper not found' });
-        return;
-      }
-
-      res.status(200).json({ url: originalUrl });
-    } catch (err) {
-      console.error('Error retrieving original wallpaper URL:', err);
-      res.status(500).json({ error: 'Internal server error' });
+    if (!originalUrl) {
+      res.status(404).json({ error: 'Wallpaper not found' });
+      return;
     }
+
+    res.status(200).json({ url: originalUrl });
   }
 
   /**
@@ -102,45 +97,35 @@ class WallpaperController {
    * @throws {Error} Caso ocorra qualquer outra falha no processo de registro ou upload.
    */
   async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
-    try {
-      const file = req.file;
+    const file = req.file;
 
-      if (!file) {
-        res.status(400).json({ error: 'File is required' });
-        return;
-      }
-
-      const dto: CreateWallpaper = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-
-      if (!Array.isArray(dto.tagsIDs) || dto.tagsIDs.length === 0) {
-        res.status(400).json({ error: '`tagsIDs` must be a non-empty array' });
-        return;
-      }
-
-      const tags = await this.tagService.findAllByIds(dto.tagsIDs);
-
-      const { original, compressed } = await this.imageCompressService.compress({
-        path: file.path,
-        quality: QualityCompress.MEDIUM,
-      });
-
-      await Promise.all([
-        this.storageService.upload(this.bucket, `/original/${file.filename}`, original.buffer),
-        this.storageService.upload(this.bucket, `/compressed/${file.filename}`, compressed.buffer),
-      ]);
-
-      const created = await this.wallpaperService.register(dto, tags);
-
-      res.status(201).json({ id: created.id });
-    } catch (error) {
-      if (error instanceof TagNotFound) {
-        res.status(404).json({ error: error.message });
-        return;
-      }
-
-      console.error('Error registering wallpaper:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    if (!file) {
+      res.status(400).json({ error: 'File is required' });
+      return;
     }
+
+    const dto: CreateWallpaper = req.body;
+
+    if (!Array.isArray(dto.tagsIDs) || dto.tagsIDs.length === 0) {
+      res.status(400).json({ error: '`tagsIDs` must be a non-empty array' });
+      return;
+    }
+
+    const tags = await this.tagService.findAllByIds(dto.tagsIDs);
+
+    const { original, compressed } = await this.imageCompressService.compress({
+      path: file.path,
+      quality: QualityCompress.MEDIUM,
+    });
+
+    await Promise.all([
+      this.storageService.upload(this.bucket, `/original/${file.filename}`, original.buffer),
+      this.storageService.upload(this.bucket, `/compressed/${file.filename}`, compressed.buffer),
+    ]);
+
+    const created = await this.wallpaperService.register(dto, tags);
+
+    res.status(201).json({ id: created.id });
   }
 }
 
