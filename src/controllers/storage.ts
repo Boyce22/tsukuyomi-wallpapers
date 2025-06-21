@@ -38,15 +38,9 @@ class StorageController {
    * @throws {Error} Quando ocorre falha na comunicação com o serviço de armazenamento.
    */
   async getBuckets(req: Request, res: Response): Promise<void> {
-    try {
-      const buckets = await this.service.getBuckets();
-      res.status(200).json({ buckets });
-    } catch (error) {
-      console.error('Erro ao listar buckets:', error);
-      res.status(error instanceof Error ? 400 : 500).json({
-        error: error instanceof Error ? error.message : 'Erro interno do servidor',
-      });
-    }
+    const buckets = await this.service.getBuckets();
+    
+    res.status(200).json({ buckets });
   }
 }
 

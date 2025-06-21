@@ -46,6 +46,17 @@ class UserRepository implements IUserRepository {
 
     return await this.repository.save(user);
   }
+
+  /**
+   * Busca um usuário pelo seu email.
+   *
+   * @param {string} email - Email do usuário
+   * @returns - Promise resolvida com a entidade {@link User} correspondente ao email fornecido, ou null se nenhuma correspondência for encontrada.
+   */
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.repository.findOneBy({ email });
+  }
 }
 
 export default UserRepository;

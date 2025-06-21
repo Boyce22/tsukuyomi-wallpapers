@@ -37,16 +37,11 @@ class TagController {
    * @throws {Error} Quando ocorre falha na criação da tag.
    */
   async register(req: Request, res: Response): Promise<void> {
-    try {
-      const dto: CreateTag = req.body;
-      const tagId = await this.service.register(dto);
-      res.status(201).json({ id: tagId });
-    } catch (error) {
-      console.error('Erro ao registrar tag:', error);
-      res.status(error instanceof Error ? 400 : 500).json({
-        error: error instanceof Error ? error.message : 'Erro interno do servidor',
-      });
-    }
+    const dto: CreateTag = req.body;
+    
+    const tagId = await this.service.register(dto);
+
+    res.status(201).json({ id: tagId });
   }
 
   /**
@@ -59,22 +54,15 @@ class TagController {
    * @throws {Error} Quando ocorre falha na busca ou os dados são inválidos.
    */
   async findAllByIds(req: Request, res: Response): Promise<void> {
-    try {
-      const ids = req.body?.ids;
+    const ids = req.body?.ids;
 
-      if (!Array.isArray(ids) || !ids.every((id) => typeof id === 'string')) {
-        res.status(400).json({ error: '`ids` deve ser um array de strings.' });
-        return;
-      }
-
-      const tags = await this.service.findAllByIds(ids);
-      res.status(200).json(tags);
-    } catch (error) {
-      console.error('Erro ao buscar tags pelos IDs:', error);
-      res.status(error instanceof Error ? 400 : 500).json({
-        error: error instanceof Error ? error.message : 'Erro interno do servidor',
-      });
+    if (!Array.isArray(ids) || !ids.every((id) => typeof id === 'string')) {
+      res.status(400).json({ error: '`ids` deve ser um array de strings.' });
+      return;
     }
+
+    const tags = await this.service.findAllByIds(ids);
+    res.status(200).json(tags);
   }
 }
 

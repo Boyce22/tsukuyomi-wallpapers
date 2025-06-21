@@ -13,15 +13,18 @@ app.use(express.json());
 // Rotas da API versionadas
 app.use('/tsukuyomi/v1', routes);
 
-// Middleware para rotas não encontradas (404)
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Not Found' });
-});
-
 // Middleware global de tratamento de erros
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Global Error Handler', err);
-  res.status(500).json({ error: 'Internal Server Error' });
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  console.error('Global Error Handler:', err);
+
+  const isProd = process.env.NODE_ENV === 'production';
+  const statusCode = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+
+  res.status(statusCode).json({
+    error: isProd ? 'Internal Server Error' : message,
+    ...(isProd ? {} : { stack: err.stack }),
+  });
 });
 
 AppDataSource.initialize()

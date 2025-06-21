@@ -1,3 +1,5 @@
+import type { User } from '@/models/user';
+
 import { CreateUser, IUserRepository, IUserService } from '@/_types/users/user.types';
 
 /**
@@ -30,16 +32,13 @@ class UserService implements IUserService {
    * Registra um novo usuário no sistema.
    *
    * @param {CreateUser} dto - Dados necessários para criação do usuário.
-   * @returns {Promise<string>} Promessa que resolve para o ID do usuário criado.
+   * @returns {Promise<User>} Promessa que resolve para o ID do usuário criado.
    * @throws {Error} Caso ocorra falha ao registrar o usuário.
    */
-  async register(dto: CreateUser): Promise<string> {
+  async register(dto: CreateUser): Promise<User> {
     try {
-      // todo futuramente retornar já logado
-
       const user = await this.repository.register(dto);
-
-      return user.id;
+      return user;
     } catch (error) {
       console.error('Error registering user:', error);
       throw new Error('Failed to register user.');

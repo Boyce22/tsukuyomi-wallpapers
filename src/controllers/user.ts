@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { CreateUser, IUserService } from '@/_types/users/user.types';
+import { IAuthService, IHashProvider } from '@/_types/auth/auth.type';
 
 /**
  * Controller responsável por lidar com requisições relacionadas à entidade User.
@@ -8,13 +9,19 @@ import { CreateUser, IUserService } from '@/_types/users/user.types';
 class UserController {
   private readonly service: IUserService;
 
+  private readonly authService: IAuthService;
+
+  private readonly hashProvider: IHashProvider;
+
   /**
    * Cria uma nova instância do {@link UserController}.
    *
    * @param {IUserService} service - Instância do serviço responsável pela lógica de usuários.
    */
-  constructor(service: IUserService) {
+  constructor(service: IUserService, authService: IAuthService, hashProvider: IHashProvider) {
     this.service = service;
+    this.authService = authService;
+    this.hashProvider = hashProvider;
   }
 
   /**
@@ -23,8 +30,8 @@ class UserController {
    * @param {IUserService} service - Instância do serviço de usuários.
    * @returns {UserController} Nova instância do controller.
    */
-  static createInstance(service: IUserService): UserController {
-    return new UserController(service);
+  static createInstance(service: IUserService, authService: IAuthService, hashProvider: IHashProvider): UserController {
+    return new UserController(service, authService, hashProvider);
   }
 
   /**
@@ -36,17 +43,21 @@ class UserController {
    * @returns {Promise<void>} Promise resolvida após o término da operação.
    * @throws {Error} Lança erro em caso de falha na validação ou persistência do usuário.
    */
+
   async register(req: Request, res: Response): Promise<void> {
-    try {
-      const dto: CreateUser = req.body;
-      const message = await this.service.register(dto);
-      res.status(201).json({ message });
-    } catch (error) {
-      console.error('Erro ao registrar o usuário:', error);
-      const statusCode = error instanceof Error ? 400 : 500;
-      const message = error instanceof Error ? error.message : 'Erro interno do servidor';
-      res.status(statusCode).json({ error: message });
+    if (!req.file) {
+      throw new Error('Photo is required');
     }
+
+    const dto: CreateUser = req.body;
+
+    const hashPassword = await this.hashProvider.hash(dto.password);
+
+    const user = await this.service.register({ ...dto, password: hashPassword });
+
+    const token = await this.authService.authenticate(user.email, user.password);
+
+    res.status(201).json(token);
   }
 }
 
