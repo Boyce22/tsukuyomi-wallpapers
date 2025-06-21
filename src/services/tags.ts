@@ -1,7 +1,7 @@
 import { Tag } from '@/models/tag';
 import { TagNotFound } from '@/exceptions/tag-not-found';
 import { IdNotProvided } from '@/exceptions/id-not-provided';
-import { CreateTag, ITagRepository, ITagService } from '@/_types/tags/tags.type';
+import { CreateTag, ITagRepository, ITagService } from '@/_types/tags/tag.type';
 
 /**
  * Serviço responsável pela lógica de negócio relacionada à entidade Tag.

@@ -6,17 +6,50 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTabl
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid', { comment: 'Identificador único do usuário, gerado automaticamente.' })
+  @PrimaryGeneratedColumn('uuid', {
+    comment: 'Identificador único do usuário, gerado automaticamente.',
+  })
   id!: string;
 
-  @Column({ comment: 'Nome próprio do usuário.' })
+  @Column({ length: 50, comment: 'Nome próprio do usuário (máx. 50 caracteres).' })
   name!: string;
 
-  @Column({ comment: 'Sobrenome do usuário.' })
+  @Column({ length: 50, comment: 'Sobrenome do usuário (máx. 50 caracteres).' })
   lastName!: string;
 
-  @Column({ unique: true, comment: 'Nome de usuário único utilizado para login e identificação.' })
+  @Column({
+    unique: true,
+    length: 50,
+    comment: 'Nome de usuário único utilizado para login e identificação (máx. 50 caracteres).',
+  })
   userName!: string;
+
+  @Column({
+    unique: true,
+    length: 255,
+    comment: 'Endereço de e-mail do usuário, deve ser único (máx. 255 caracteres).',
+  })
+  email!: string;
+
+  @Column({
+    default: false,
+    comment: 'Indica se o usuário foi verificado.',
+  })
+  isVerified!: boolean;
+
+  @Column({
+    nullable: true,
+    length: 255,
+    comment: 'URL da foto de perfil do usuário (máx. 255 caracteres).',
+  })
+  profilePictureUrl?: string;
+
+  @Column({
+    nullable: true,
+    length: 255,
+    comment: 'URL do banner do perfil do usuário (máx. 255 caracteres).',
+  })
+  bannerUrl?: string;
 
   @OneToMany(() => Wallpaper, (wallpaper) => wallpaper.createdBy)
   createdWallpapers!: Wallpaper[];

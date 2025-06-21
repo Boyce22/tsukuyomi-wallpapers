@@ -2,7 +2,7 @@ import { Tag } from '@/models/tag';
 import { In, Repository } from 'typeorm';
 import AppDataSource from '@/config/database';
 
-import { CreateTag, ITagRepository } from '@/_types/tags/tags.type';
+import { CreateTag, ITagRepository } from '@/_types/tags/tag.type';
 
 /**
  * Repositório responsável pelas operações de acesso a dados da entidade Tag.
@@ -33,9 +33,9 @@ export class TagRepository implements ITagRepository {
    * @param {string[]} ids - Array contendo os IDs das tags a serem buscadas.
    * @returns {Promise<Tag[]>} Promise que resolve com a lista de tags encontradas.
    */
-  findAllByIds = async (ids: string[]): Promise<Tag[]> => {
+  async findAllByIds(ids: string[]): Promise<Tag[]> {
     return this.repository.find({ where: { id: In(ids) } });
-  };
+  }
 
   /**
    * Registra uma nova tag no banco de dados.
@@ -43,12 +43,12 @@ export class TagRepository implements ITagRepository {
    * @param {CreateTag} dto - Objeto com os dados para criação da tag.
    * @returns {Promise<Tag>} Promise que resolve para a tag recém-criada.
    */
-  register = async (dto: CreateTag): Promise<Tag> => {
+  async register(dto: CreateTag): Promise<Tag> {
     const tag = this.repository.create({
       name: dto.name,
       description: dto.description,
     });
 
     return this.repository.save(tag);
-  };
+  }
 }
