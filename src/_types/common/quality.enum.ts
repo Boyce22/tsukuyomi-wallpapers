@@ -1,20 +1,32 @@
 /**
- * Níveis de qualidade utilizados para compressão de imagens.
- * Os valores representam a porcentagem da qualidade original (de 0 a 100).
+ * Enumeração que representa os níveis de qualidade para compressão de imagens.
+ * Cada nível é definido como uma porcentagem da qualidade original (0 a 100).
+ *
+ * @enum {number}
  */
 export enum QualityCompress {
-  /** Qualidade muito alta (90%) */
+  /**
+   * Qualidade muito alta, equivalente a 90% da qualidade original.
+   */
   VERY_HIGH = 90,
 
-  /** Qualidade alta (80%) */
+  /**
+   * Qualidade alta, equivalente a 80% da qualidade original.
+   */
   HIGH = 80,
 
-  /** Qualidade média (60%) */
+  /**
+   * Qualidade média, equivalente a 60% da qualidade original.
+   */
   MEDIUM = 60,
 
-  /** Qualidade baixa (40%) */
+  /**
+   * Qualidade baixa, equivalente a 40% da qualidade original.
+   */
   LOW = 40,
 
-  /** Qualidade muito baixa (20%) */
+  /**
+   * Qualidade muito baixa, equivalente a 20% da qualidade original.
+   */
   VERY_LOW = 20,
 }

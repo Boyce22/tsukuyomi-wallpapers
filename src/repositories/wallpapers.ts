@@ -5,7 +5,8 @@ import { Wallpaper } from '@/models/wallpaper';
 import { CreateWallpaper, IWallpaperRepository } from '@/_types/wallpapers/wallpaper.types';
 
 /**
- * Repositório responsável por operações no banco de dados relacionadas à entidade Wallpaper.
+ * Repositório responsável pelas operações de acesso e persistência da entidade Wallpaper.
+ * Implementa a interface IWallpaperRepository.
  */
 class WallpaperRepository implements IWallpaperRepository {
   private repository: Repository<Wallpaper>;
@@ -19,38 +20,42 @@ class WallpaperRepository implements IWallpaperRepository {
 
   /**
    * Cria uma nova instância do repositório de wallpapers.
-   * @returns {WallpaperRepository} Nova instância de WallpaperRepository.
+   *
+   * @returns {WallpaperRepository} Nova instância do repositório.
    */
   static createInstance(): WallpaperRepository {
     return new WallpaperRepository();
   }
 
   /**
-   * Busca a URL da imagem em tamanho original a partir do ID do wallpaper.
-   * @param {string} id - ID do wallpaper a ser buscado.
-   * @returns {Promise<string | null>} Promise que resolve para a URL da imagem original ou null se não encontrado.
+   * Busca a URL da imagem original do wallpaper pelo seu ID.
+   *
+   * @param {string} id - ID do wallpaper.
+   * @returns {Promise<string | null>} Promise que resolve para a URL da imagem original,
+   * ou `null` caso o wallpaper não seja encontrado.
    */
-  findUrlWithOriginalSizeById = async (id: string): Promise<string | null> => {
+  async findUrlWithOriginalSizeById(id: string): Promise<string | null> {
     const wallpaper = await this.repository.findOneBy({ id });
     return wallpaper?.originalUrl ?? null;
-  };
+  }
 
   /**
-   * Registra um novo wallpaper no banco de dados.
-   * @param {CreateWallpaper} dto - Dados do wallpaper a ser registrado.
-   * @param {Tag[]} tags - Lista de tags associadas ao wallpaper.
+   * Registra um novo wallpaper com as tags associadas.
+   *
+   * @param {CreateWallpaper} dto - Dados necessários para criar o wallpaper.
+   * @param {Tag[]} tags - Lista de tags a serem associadas ao wallpaper.
    * @returns {Promise<Wallpaper>} Promise que resolve para o wallpaper criado.
    */
-  register = async (dto: CreateWallpaper, tags: Tag[]): Promise<Wallpaper> => {
+  async register(dto: CreateWallpaper, tags: Tag[]): Promise<Wallpaper> {
     const wallpaper = this.repository.create({
       name: dto.name,
-      description: dto?.description,
-      isMature: dto?.isMature,
+      description: dto.description,
+      isMature: dto.isMature,
       tags,
     });
 
     return this.repository.save(wallpaper);
-  };
+  }
 }
 
 export default WallpaperRepository;
