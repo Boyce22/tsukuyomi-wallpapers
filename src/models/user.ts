@@ -25,6 +25,12 @@ export class User {
   userName!: string;
 
   @Column({
+    length: 100,
+    comment: 'Hash da senha do usuário (máx. 100 caracteres).',
+  })
+  password!: string;
+
+  @Column({
     type: 'date',
     nullable: true,
     comment: 'Data de nascimento do usuário.',
