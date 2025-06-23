@@ -1,7 +1,6 @@
 import type { User } from '@/models/user';
 
-import { CreateUser, IUserRepository, IUserService } from '@/_types/users/user.types';
-import { UpdateNameUserResponseDTO } from '@/_types/dtos/update-name-user';
+import { CreateUser, IUserRepository, IUserService, UpdateNameUser } from '@/_types/users/user.types';
 import { NotFound } from '@/exceptions/not-found';
 
 /**
@@ -55,15 +54,15 @@ class UserService implements IUserService {
    * @throws InvalidArgumentError se o ID ou nome não forem fornecidos
    * @throws NotFound se o usuário não for encontrado no repositório
    */
- async updateName (id: string, data: Pick<User, 'name'>): Promise<UpdateNameUserResponseDTO> {
-    if (!id || !data.name) {
+  async updateName(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser> {
+    if (!ids || !data.name) {
       throw new NotFound('User ID and name must be provided.');
     }
 
-    const updatedUser = await this.repository.updateName(id, { name: data.name });
+    const updatedUser = await this.repository.update(ids, { name: data.name });
 
     if (!updatedUser) {
-      throw new NotFound(`User with id ${id} not found`);
+      throw new NotFound(`User with id ${ids} not found`);
     }
 
     return updatedUser;

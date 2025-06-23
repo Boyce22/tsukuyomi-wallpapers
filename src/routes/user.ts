@@ -12,6 +12,7 @@ export const createUserRouter = (service: IUserService, hashProvider: IHashProvi
   const controller = UserController.createInstance(service, authService, hashProvider);
 
   router.post('/', multer.single('photo'), (req: Request, res: Response) => controller.register(req, res));
+  router.patch('/name/:id', (req: Request, res: Response, next) => controller.updateName(req, res, next));
 
   return router;
 };
