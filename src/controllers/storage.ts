@@ -39,7 +39,7 @@ class StorageController {
    */
   async getBuckets(req: Request, res: Response): Promise<void> {
     const buckets = await this.service.getBuckets();
-    
+
     res.status(200).json({ buckets });
   }
 }
