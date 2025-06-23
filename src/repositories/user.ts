@@ -57,6 +57,10 @@ class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {
     return await this.repository.findOneBy({ email });
   }
+
+  async changeProfilePicture(id: string, path: string): Promise<void> {
+    await this.repository.update({ id }, { profilePictureUrl: path });
+  }
 }
 
 export default UserRepository;

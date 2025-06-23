@@ -17,6 +17,7 @@ import { createStorageRouter } from '@/routes/storage';
 import { createWallpaperRouter } from '@/routes/wallpaper';
 
 import UserRepository from '@/repositories/user';
+import { createAuthRouter } from './auth';
 
 const router = Router();
 
@@ -32,8 +33,9 @@ const wallpaperService = WallpaperService.createInstance(WallpaperRepository.cre
 const params = { tagService, wallpaperService, imageCompressService, storageService };
 
 router.use('/tags', createTagsRouter(tagService));
+router.use('/auth', createAuthRouter(authService));
 router.use('/wallpapers', createWallpaperRouter(params));
 router.use('/storage', createStorageRouter(storageService));
-router.use('/users', createUserRouter(userService, hashProvider, authService));
+router.use('/users', createUserRouter(userService, hashProvider, authService, imageCompressService, storageService));
 
 export default router;

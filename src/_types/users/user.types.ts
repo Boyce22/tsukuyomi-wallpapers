@@ -31,10 +31,20 @@ export interface IUserService {
    * Registra um novo usuário na aplicação.
    *
    * @param {CreateUser} dto - Dados necessários para criar o usuário.
-   * @returns {Promise<string>} Promise que resolve para o usuário criado.
+   * @returns {Promise<User>} Promise que resolve para o usuário criado.
    * @throws {Error} Caso ocorra falha ao registrar o usuário.
    */
   register(dto: CreateUser): Promise<User>;
+
+  /**
+   * Altera a foto de perfil de um usuário existente.
+   *
+   * @param {string} id - Identificador único do usuário.
+   * @param {string} path - Caminho (path) da nova imagem de perfil.
+   * @returns {Promise<void>} Promise que resolve quando a operação for concluída.
+   * @throws {Error} Caso ocorra falha ao atualizar a imagem de perfil.
+   */
+  changeProfilePicture(id: string, path: string): Promise<String>;
 }
 
 /**
@@ -55,9 +65,19 @@ export interface IUserRepository {
   /**
    * Busca um usuário pelo seu email.
    *
-   * @param {string} email - Email do usuário
-   * @returns {Promise<User | null>} Promise que resolve para a entidade `User` ou null se nenhuma for encontrada
+   * @param {string} email - Email do usuário.
+   * @returns {Promise<User | null>} Promise que resolve para a entidade `User` ou `null` se não encontrado.
+   * @throws {Error} Caso ocorra falha na consulta ao banco de dados.
    */
-
   findByEmail(email: string): Promise<User | null>;
+
+  /**
+   * Atualiza a imagem de perfil de um usuário no banco de dados.
+   *
+   * @param {string} id - Identificador único do usuário.
+   * @param {string} path - Caminho (path) da nova imagem de perfil.
+   * @returns {Promise<void>} Promise que resolve quando a operação for concluída.
+   * @throws {Error} Caso ocorra falha ao atualizar a imagem de perfil.
+   */
+  changeProfilePicture(id: string, path: string): Promise<void>;
 }

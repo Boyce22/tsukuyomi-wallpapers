@@ -20,7 +20,7 @@ export interface CreateWallpaper {
 
 /**
  * Extensão da interface Request do Express para criação de wallpaper,
- * incluindo tipagem para body e arquivo recebido via Multer.
+ * incluindo tipagem para o corpo e arquivo recebido via Multer.
  *
  * @interface CreateWallpaperRequest
  * @extends {Request}
