@@ -44,6 +44,16 @@ class UserService implements IUserService {
       throw new Error('Failed to register user.');
     }
   }
+
+  async changeProfilePicture(id: string, path: string): Promise<string> {
+    try {
+      await this.repository.changeProfilePicture(id, path);
+      return 'Profile picture changed successfully';
+    } catch (error) {
+      console.error('Error changing profile picture:', error);
+      throw new Error('Failed to change profile picture.');
+    }
+  }
 }
 
 export default UserService;

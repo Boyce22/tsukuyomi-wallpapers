@@ -27,8 +27,8 @@ type ImageData = {
 };
 
 /**
- * Resultado da operação de compressão de imagem, contendo
- * dados da imagem original e da imagem comprimida.
+ * Resultado da operação de compressão de imagem, contendo os dados
+ * da imagem original e da imagem comprimida.
  *
  * @typedef {Object} CompressResult
  * @property {ImageData} original - Dados da imagem original.
@@ -41,6 +41,7 @@ export type CompressResult = {
 
 /**
  * Interface para o serviço de compressão de imagens.
+ *
  * Define o contrato para implementação de qualquer serviço
  * que realize compressão de imagens com qualidade ajustável.
  *
@@ -50,7 +51,7 @@ export interface IImageCompressService {
   /**
    * Realiza a compressão de uma imagem conforme os parâmetros especificados.
    *
-   * @param {ImageCompressParams} params - Parâmetros da compressão, incluindo caminho da imagem e qualidade.
+   * @param {ImageCompressParams} params - Parâmetros da compressão, incluindo caminho da imagem e qualidade desejada.
    * @returns {Promise<CompressResult>} Promessa que resolve com os dados da imagem original e comprimida.
    * @throws {Error} Caso ocorra falha na compressão ou o arquivo não seja encontrado.
    */
