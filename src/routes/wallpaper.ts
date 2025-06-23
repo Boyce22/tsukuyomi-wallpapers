@@ -8,6 +8,7 @@ import { IWallpaperService } from '@/_types/wallpapers/wallpaper.types';
 import { IImageCompressService } from '@/_types/compress/compress.type';
 
 import { IStorageService } from '@/_types/storage/storage.type';
+import { authenticate } from '@/middlewares/auth';
 
 type ConstructorParams = {
   wallpaperService: IWallpaperService;
@@ -22,7 +23,7 @@ export const createWallpaperRouter = (params: ConstructorParams) => {
 
   router.get('/:id/original', (req: Request, res: Response) => controller.getOriginalSize(req, res));
 
-  router.post('/', multer.single('wallpaper'), (req: Request, res: Response) => controller.register(req, res));
+  router.post('/', authenticate, multer.single('wallpaper'), (req: Request, res: Response) => controller.register(req, res));
 
   return router;
 };
