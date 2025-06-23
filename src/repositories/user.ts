@@ -2,6 +2,8 @@ import { User } from '@/models/user';
 import { Repository } from 'typeorm';
 import AppDataSource from '@/config/database';
 import { CreateUser, IUserRepository } from '@/_types/users/user.types';
+import { NotFound } from '@/exceptions/not-found';
+import { UpdateNameUserResponseDTO } from '@/_types/dtos/update-name-user';
 
 /**
  * Repositório responsável por operações de persistência da entidade {@link User}.
@@ -57,6 +59,13 @@ class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {
     return await this.repository.findOneBy({ email });
   }
+
+  updateName = async (ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUserResponseDTO> => {
+    const updatedUser = await this.repository.update(ids, { name: data.name });
+    if (!updatedUser.affected) { throw new NotFound(`User with id ${ids} not found`); }
+    return { name: data.name };
+
+  };
 }
 
 export default UserRepository;

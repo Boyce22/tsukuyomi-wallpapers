@@ -1,6 +1,8 @@
 import type { User } from '@/models/user';
 
 import { CreateUser, IUserRepository, IUserService } from '@/_types/users/user.types';
+import { UpdateNameUserResponseDTO } from '@/_types/dtos/update-name-user';
+import { NotFound } from '@/exceptions/not-found';
 
 /**
  * Serviço responsável pela lógica de negócio relacionada à entidade User.
@@ -44,6 +46,28 @@ class UserService implements IUserService {
       throw new Error('Failed to register user.');
     }
   }
+
+   /**
+   * Atualiza o nome de um usuário com base no ID
+   * @param id - ID do usuário
+   * @param data - Objeto contendo o novo nome
+   * @returns Usuário atualizado
+   * @throws InvalidArgumentError se o ID ou nome não forem fornecidos
+   * @throws NotFound se o usuário não for encontrado no repositório
+   */
+ async updateName (id: string, data: Pick<User, 'name'>): Promise<UpdateNameUserResponseDTO> {
+    if (!id || !data.name) {
+      throw new NotFound('User ID and name must be provided.');
+    }
+
+    const updatedUser = await this.repository.updateName(id, { name: data.name });
+
+    if (!updatedUser) {
+      throw new NotFound(`User with id ${id} not found`);
+    }
+
+    return updatedUser;
+  };
 }
 
 export default UserService;
