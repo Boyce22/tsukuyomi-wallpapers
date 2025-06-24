@@ -64,7 +64,13 @@ export interface IUserRepository {
    * @returns {Promise<User | null>} Promise que resolve para a entidade `User` ou null se nenhuma for encontrada
    */
 
+   update(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser>;
+
   findByEmail(email: string): Promise<User | null>;
 
-  update(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser>;
+  
+  
+  
+  
+ 
 }
