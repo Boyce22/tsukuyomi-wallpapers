@@ -22,8 +22,8 @@ export type CreateUser = {
 };
 
 export type UpdateNameUser = {
-  name: string
-}
+  name: string;
+};
 
 /**
  * Interface da camada de serviço responsável pela lógica de negócios relacionada a usuários.
@@ -31,7 +31,6 @@ export type UpdateNameUser = {
  * @interface IUserService
  */
 export interface IUserService {
-
   updateName(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser>;
   /**
    * Registra um novo usuário na aplicação.
@@ -49,7 +48,6 @@ export interface IUserService {
  * @interface IUserRepository
  */
 export interface IUserRepository {
-  
   /**
    * Registra um novo usuário no banco de dados.
    *

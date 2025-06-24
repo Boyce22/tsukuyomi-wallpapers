@@ -59,12 +59,13 @@ class UserRepository implements IUserRepository {
     return await this.repository.findOneBy({ email });
   }
 
- async update (ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser> {
+  async update(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser> {
     const updatedUser = await this.repository.update(ids, { name: data.name });
-    if (!updatedUser.affected) { throw new NotFound(`User with id ${ids} not found`); }
+    if (!updatedUser.affected) {
+      throw new NotFound(`User with id ${ids} not found`);
+    }
     return { name: data.name };
-
-  };
+  }
 }
 
 export default UserRepository;

@@ -46,7 +46,7 @@ class UserService implements IUserService {
     }
   }
 
-   /**
+  /**
    * Atualiza o nome de um usuário com base no ID
    * @param id - ID do usuário
    * @param data - Objeto contendo o novo nome
@@ -66,7 +66,7 @@ class UserService implements IUserService {
     }
 
     return updatedUser;
-  };
+  }
 }
 
 export default UserService;

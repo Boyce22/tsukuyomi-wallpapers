@@ -18,5 +18,4 @@ class HashProvider implements IHashProvider {
   }
 }
 
-
 export default HashProvider;

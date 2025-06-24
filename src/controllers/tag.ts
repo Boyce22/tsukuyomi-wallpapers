@@ -38,7 +38,7 @@ class TagController {
    */
   async register(req: Request, res: Response): Promise<void> {
     const dto: CreateTag = req.body;
-    
+
     const tagId = await this.service.register(dto);
 
     res.status(201).json({ id: tagId });
