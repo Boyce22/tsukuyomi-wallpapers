@@ -46,6 +46,7 @@ class UserService implements IUserService {
     }
   }
 
+ TSU-002
   /**
    * Atualiza o nome de um usuário com base no ID
    * @param id - ID do usuário
@@ -66,6 +67,16 @@ class UserService implements IUserService {
     }
 
     return updatedUser;
+
+  async changeProfilePicture(id: string, path: string): Promise<string> {
+    try {
+      await this.repository.changeProfilePicture(id, path);
+      return 'Profile picture changed successfully';
+    } catch (error) {
+      console.error('Error changing profile picture:', error);
+      throw new Error('Failed to change profile picture.');
+    }
+ develop
   }
 }
 

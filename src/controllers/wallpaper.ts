@@ -98,6 +98,7 @@ class WallpaperController {
    */
   async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
     const file = req.file;
+    const userId = req.userId!;
 
     if (!file) {
       res.status(400).json({ error: 'File is required' });
@@ -118,9 +119,13 @@ class WallpaperController {
       quality: QualityCompress.MEDIUM,
     });
 
+    const compressedPath = `wallpapers/${userId}/${file.filename}-comp`;
+
+    const originalPath = `wallpapers/${userId}/${file.filename}-orig`;
+
     await Promise.all([
-      this.storageService.upload(this.bucket, `/original/${file.filename}`, original.buffer),
-      this.storageService.upload(this.bucket, `/compressed/${file.filename}`, compressed.buffer),
+      this.storageService.upload(this.bucket, originalPath, original.buffer),
+      this.storageService.upload(this.bucket, compressedPath, compressed.buffer),
     ]);
 
     const created = await this.wallpaperService.register(dto, tags);

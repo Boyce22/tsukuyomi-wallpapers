@@ -4,8 +4,14 @@ import type { Request, Response } from 'express';
 /**
  * Controller responsável por lidar com requisições relacionadas à entidade Tag.
  * Utiliza os métodos definidos em {@link ITagService}.
+ *
+ * @class TagController
  */
 class TagController {
+  /**
+   * Serviço responsável pela lógica de negócios de tags.
+   * @private
+   */
   private readonly service: ITagService;
 
   /**
@@ -30,6 +36,9 @@ class TagController {
   /**
    * Registra uma nova tag no sistema.
    *
+   * Recebe os dados da tag no corpo da requisição, utiliza o serviço para registrar
+   * e retorna o ID da tag criada.
+   *
    * @async
    * @param {Request} req - Objeto da requisição HTTP contendo os dados da nova tag no corpo.
    * @param {Response} res - Objeto da resposta HTTP. Retorna o ID da tag criada ou erro.
@@ -46,6 +55,9 @@ class TagController {
 
   /**
    * Busca uma lista de tags com base em um array de IDs fornecido.
+   *
+   * Valida que o campo `ids` do corpo da requisição seja um array de strings,
+   * em seguida utiliza o serviço para buscar as tags correspondentes e as retorna.
    *
    * @async
    * @param {Request} req - Objeto da requisição HTTP contendo `ids` no corpo.

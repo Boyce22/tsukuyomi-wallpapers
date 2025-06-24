@@ -59,12 +59,17 @@ class UserRepository implements IUserRepository {
     return await this.repository.findOneBy({ email });
   }
 
+ TSU-002
   async update(ids: string, data: Pick<User, 'name'>): Promise<UpdateNameUser> {
     const updatedUser = await this.repository.update(ids, { name: data.name });
     if (!updatedUser.affected) {
       throw new NotFound(`User with id ${ids} not found`);
     }
     return { name: data.name };
+
+  async changeProfilePicture(id: string, path: string): Promise<void> {
+    await this.repository.update({ id }, { profilePictureUrl: path });
+ develop
   }
 }
 
