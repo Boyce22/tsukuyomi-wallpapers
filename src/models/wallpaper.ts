@@ -51,7 +51,7 @@ export class Wallpaper {
   isMature!: boolean;
 
   @Column({
-    default: true,
+    default: false,
     comment: 'Indica se o papel de parede está ativo e disponível.',
   })
   isActive!: boolean;
