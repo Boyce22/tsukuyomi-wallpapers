@@ -2,6 +2,6 @@
 .idea
 .vscode
 *.md
-src/migrations/*.ts
+src/infrastructure/migrations/*.ts
 package.json
 package-lock.json

@@ -11,10 +11,6 @@ class WallpaperRepository implements IWallpaperRepository {
     this.repository = AppDataSource.getRepository(Wallpaper);
   }
 
-  static createInstance(): WallpaperRepository {
-    return new WallpaperRepository();
-  }
-
   async findUrlWithOriginalSizeById(id: string): Promise<string | null> {
     const wallpaper = await this.repository.findOneBy({ id });
     return wallpaper?.originalUrl ?? null;

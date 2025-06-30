@@ -2,6 +2,7 @@ import { CreateTag } from '@/application/_types/tags/tag.type';
 import type { Request, Response } from 'express';
 import { IRegisterTagUseCase } from '@/application/use-cases/tag/register-tag';
 import { IFindAllTagsByIdsUseCase } from '@/application/use-cases/tag/find-all-tags-by-ids';
+import { InvalidTagsError } from '@/domain/exceptions/invalid-tags-error';
 
 class TagController {
   private readonly registerTagUseCase: IRegisterTagUseCase;
@@ -10,13 +11,6 @@ class TagController {
   constructor(registerTagUseCase: IRegisterTagUseCase, findAllTagsByIdsUseCase: IFindAllTagsByIdsUseCase) {
     this.registerTagUseCase = registerTagUseCase;
     this.findAllTagsByIdsUseCase = findAllTagsByIdsUseCase;
-  }
-
-  static createInstance(
-    registerTagUseCase: IRegisterTagUseCase,
-    findAllTagsByIdsUseCase: IFindAllTagsByIdsUseCase,
-  ): TagController {
-    return new TagController(registerTagUseCase, findAllTagsByIdsUseCase);
   }
 
   async register(req: Request, res: Response): Promise<void> {
@@ -31,8 +25,7 @@ class TagController {
     const ids = req.body?.ids;
 
     if (!Array.isArray(ids) || !ids.every((id) => typeof id === 'string')) {
-      res.status(400).json({ error: '`ids` deve ser um array de strings.' });
-      return;
+      throw new InvalidTagsError('`ids` deve ser um array de strings.');
     }
 
     const tags = await this.findAllTagsByIdsUseCase.execute(ids);

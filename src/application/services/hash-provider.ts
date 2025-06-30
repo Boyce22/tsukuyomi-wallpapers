@@ -6,10 +6,6 @@ class HashProvider implements IHashProvider {
 
   constructor() {}
 
-  public static createInstance(): HashProvider {
-    return new HashProvider();
-  }
-
   hash(password: string): Promise<string> {
     return bcrypt.hash(password, this.saltRounds);
   }

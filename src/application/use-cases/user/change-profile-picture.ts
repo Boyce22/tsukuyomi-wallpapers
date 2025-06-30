@@ -2,6 +2,7 @@ import { IUserService } from '@/application/_types/users/user.types';
 import { IImageCompressService } from '@/application/_types/compress/compress.type';
 import { IStorageService } from '@/application/_types/storage/storage.type';
 import { QualityCompress } from '@/application/_types/common/quality.enum';
+import { StorageConfigError } from '@/domain/exceptions/storage-config-error';
 
 export interface IChangeProfilePictureUseCase {
   execute(userId: string, file: Express.Multer.File): Promise<string>;
@@ -13,11 +14,7 @@ export class ChangeProfilePictureUseCase implements IChangeProfilePictureUseCase
   private readonly storageService: IStorageService;
   private readonly bucket: string;
 
-  constructor(
-    userService: IUserService,
-    imageCompress: IImageCompressService,
-    storageService: IStorageService,
-  ) {
+  constructor(userService: IUserService, imageCompress: IImageCompressService, storageService: IStorageService) {
     this.userService = userService;
     this.imageCompress = imageCompress;
     this.storageService = storageService;
@@ -27,7 +24,7 @@ export class ChangeProfilePictureUseCase implements IChangeProfilePictureUseCase
   private _resolveBucket(): string {
     const bucket = process.env.STORAGE_PROFILE_PICTURE_BUCKET;
     if (!bucket) {
-      throw new Error('Missing environment variable: STORAGE_PROFILE_PICTURE_BUCKET');
+      throw new StorageConfigError('Missing environment variable: STORAGE_PROFILE_PICTURE_BUCKET');
     }
     return bucket;
   }

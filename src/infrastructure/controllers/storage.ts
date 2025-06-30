@@ -8,10 +8,6 @@ class StorageController {
     this.getAllBucketsUseCase = getAllBucketsUseCase;
   }
 
-  static createInstance(getAllBucketsUseCase: IGetAllBucketsUseCase): StorageController {
-    return new StorageController(getAllBucketsUseCase);
-  }
-
   async getBuckets(req: Request, res: Response): Promise<void> {
     const buckets = await this.getAllBucketsUseCase.execute();
 
