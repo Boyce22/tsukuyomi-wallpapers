@@ -4,16 +4,13 @@ import { UrlNotProvided } from '@/domain/exceptions/url-not-provided';
 
 import { Wallpaper } from '@/domain/models/wallpaper';
 import { CreateWallpaper, IWallpaperRepository, IWallpaperService } from '@/application/_types/wallpapers/wallpaper.types';
+import { WallpaperRegistrationError } from '@/domain/exceptions/wallpaper-registration-error';
 
 class WallpaperService implements IWallpaperService {
   private readonly repository: IWallpaperRepository;
 
   constructor(repository: IWallpaperRepository) {
     this.repository = repository;
-  }
-
-  static createInstance(repository: IWallpaperRepository): WallpaperService {
-    return new WallpaperService(repository);
   }
 
   async getOriginalSize(id: string): Promise<string> {
@@ -35,7 +32,7 @@ class WallpaperService implements IWallpaperService {
       return await this.repository.register(dto, tags);
     } catch (error) {
       console.error('Error registering wallpaper:', error);
-      throw new Error('Failed to register wallpaper.');
+      throw new WallpaperRegistrationError('Failed to register wallpaper.');
     }
   }
 }

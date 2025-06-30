@@ -1,29 +1,16 @@
 import type { Request, Response } from 'express';
-import { CreateUser, IUserService } from '@/application/_types/users/user.types';
+import { CreateUser } from '@/application/_types/users/user.types';
 import { IRegisterUserUseCase } from '@/application/use-cases/user/register-user';
 import { IChangeProfilePictureUseCase } from '@/application/use-cases/user/change-profile-picture';
+import { FileRequiredError } from '@/domain/exceptions/file-required-error';
 
 class UserController {
-  private readonly service: IUserService;
   private readonly registerUserUseCase: IRegisterUserUseCase;
   private readonly changeProfilePictureUseCase: IChangeProfilePictureUseCase;
 
-  constructor(
-    service: IUserService,
-    registerUserUseCase: IRegisterUserUseCase,
-    changeProfilePictureUseCase: IChangeProfilePictureUseCase,
-  ) {
-    this.service = service;
+  constructor(registerUserUseCase: IRegisterUserUseCase, changeProfilePictureUseCase: IChangeProfilePictureUseCase) {
     this.registerUserUseCase = registerUserUseCase;
     this.changeProfilePictureUseCase = changeProfilePictureUseCase;
-  }
-
-  static createInstance(
-    service: IUserService,
-    registerUserUseCase: IRegisterUserUseCase,
-    changeProfilePictureUseCase: IChangeProfilePictureUseCase,
-  ): UserController {
-    return new UserController(service, registerUserUseCase, changeProfilePictureUseCase);
   }
 
   async register(req: Request, res: Response): Promise<void> {
@@ -36,7 +23,7 @@ class UserController {
 
   async changeProfilePicture(req: Request, res: Response): Promise<void> {
     if (!req.file) {
-      throw new Error('Photo is required');
+      throw new FileRequiredError('Photo is required');
     }
 
     const id = req.userId!;

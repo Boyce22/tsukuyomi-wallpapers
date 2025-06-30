@@ -10,10 +10,6 @@ class UserRepository implements IUserRepository {
     this.repository = AppDataSource.getRepository(User);
   }
 
-  static createInstace(): UserRepository {
-    return new UserRepository();
-  }
-
   async register(dto: CreateUser): Promise<User> {
     const user = this.repository.create({
       email: dto.email,

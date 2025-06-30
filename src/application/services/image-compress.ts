@@ -1,13 +1,16 @@
 import path from 'path';
 import sharp, { Sharp } from 'sharp';
-import { QualityCompress } from '@/application/_types/common/quality.enum';
-import { CompressResult, IImageCompressService, ImageCompressParams } from '@/application/_types/compress/compress.type';
+import { ImageCompressionError } from '@/domain/exceptions/image-compression-error';
+import { UnsupportedImageFormatError } from '@/domain/exceptions/unsupported-image-format-error';
+import {
+  CompressResult,
+  IImageCompressService,
+  ImageCompressParams,
+} from '@/application/_types/compress/compress.type';
+
+import { QualityCompress } from '../_types/common/quality.enum';
 
 class ImageCompressService implements IImageCompressService {
-  public static createInstance(): IImageCompressService {
-    return new ImageCompressService();
-  }
-
   private readonly formatMap: Record<string, (sharpInstance: Sharp, quality: QualityCompress) => Sharp> = {
     jpg: (instance, quality) => instance.jpeg({ quality }),
     jpeg: (instance, quality) => instance.jpeg({ quality }),
@@ -22,7 +25,7 @@ class ImageCompressService implements IImageCompressService {
       const formatFn = this.formatMap[extension];
 
       if (!formatFn) {
-        throw new Error(`Unsupported image format: .${extension}`);
+        throw new UnsupportedImageFormatError(`Unsupported image format: .${extension}`);
       }
 
       const sharpInstance = sharp(imagePath);
@@ -45,7 +48,7 @@ class ImageCompressService implements IImageCompressService {
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error);
       console.error(`Failed to compress image: ${errMsg}`);
-      throw new Error('Erro ao comprimir imagem. Verifique o formato ou conteúdo do arquivo.');
+      throw new ImageCompressionError('Failed to compress image. Verify the image format.');
     }
   }
 

@@ -11,10 +11,6 @@ export class TagRepository implements ITagRepository {
     this.repository = AppDataSource.getRepository(Tag);
   }
 
-  static createInstance(): TagRepository {
-    return new TagRepository();
-  }
-
   async findAllByIds(ids: string[]): Promise<Tag[]> {
     return this.repository.find({ where: { id: In(ids) } });
   }

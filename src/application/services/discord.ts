@@ -1,5 +1,7 @@
 import { ImageBufferData } from '@/application/_types/compress/compress.type';
 import { IDiscordClient, ClientStatus, RequestApproval } from '@/application/_types/discord/discord.types';
+import { DiscordConfigError } from '@/domain/exceptions/discord-config-error';
+import { InvalidDiscordChannelError } from '@/domain/exceptions/invalid-discord-channel-error';
 import { IWallpaperService } from '@/application/_types/wallpapers/wallpaper.types';
 
 import {
@@ -32,13 +34,9 @@ class DiscordClient implements IDiscordClient {
     this._buildDiscordClient();
   }
 
-  static createInstance(wallpaperService: IWallpaperService): DiscordClient {
-    return new DiscordClient();
-  }
-
   private _buildDiscordClient() {
     if (!process.env.DISCORD_TOKEN) {
-      throw new Error('Missing environment variable: DISCORD_TOKEN');
+      throw new DiscordConfigError('Missing environment variable: DISCORD_TOKEN');
     }
 
     this.client.login(process.env.DISCORD_TOKEN);
@@ -46,7 +44,7 @@ class DiscordClient implements IDiscordClient {
 
   private _addReviewerRoleId() {
     if (!process.env.DISCORD_REVIEWER_ROLE_ID) {
-      throw new Error('Missing environment variable: DISCORD_REVIEWER_ROLE_ID');
+      throw new DiscordConfigError('Missing environment variable: DISCORD_REVIEWER_ROLE_ID');
     }
 
     return process.env.DISCORD_REVIEWER_ROLE_ID;
@@ -63,12 +61,9 @@ class DiscordClient implements IDiscordClient {
       return channel;
     }
 
-    throw new Error('The specified channel is not a sendable text-based channel.');
+    throw new InvalidDiscordChannelError('The specified channel is not a sendable text-based channel.');
   }
 
-  static initialize() {
-    return new DiscordClient();
-  }
   async requestApproval({ image, userId }: RequestApproval): Promise<void> {
     const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
     const timestamp = new Date();

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { IAuthenticateUserUseCase } from '@/application/use-cases/auth/authenticate-user';
+import { MissingFieldsError } from '@/domain/exceptions/missing-fields-error';
 
 class AuthControler {
   private readonly authenticateUserUseCase: IAuthenticateUserUseCase;
@@ -8,15 +9,11 @@ class AuthControler {
     this.authenticateUserUseCase = authenticateUserUseCase;
   }
 
-  static createInstance(authenticateUserUseCase: IAuthenticateUserUseCase): AuthControler {
-    return new AuthControler(authenticateUserUseCase);
-  }
-
   async authenticate(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new Error('Email and password are required');
+      throw new MissingFieldsError('Email and password are required');
     }
 
     const token = await this.authenticateUserUseCase.execute(email, password);

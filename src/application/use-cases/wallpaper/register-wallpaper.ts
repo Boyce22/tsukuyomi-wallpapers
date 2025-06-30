@@ -3,14 +3,13 @@ import { IImageCompressService } from '@/application/_types/compress/compress.ty
 import { IStorageService } from '@/application/_types/storage/storage.type';
 import { ITagService } from '@/application/_types/tags/tag.type';
 import { CreateWallpaper, IWallpaperService } from '@/application/_types/wallpapers/wallpaper.types';
-import DiscordClient from '@/application/services/discord';
+import { IDiscordClient } from '@/application/_types/discord/discord.types';
+import { StorageConfigError } from '@/domain/exceptions/storage-config-error';
+import { FileRequiredError } from '@/domain/exceptions/file-required-error';
+import { InvalidTagsError } from '@/domain/exceptions/invalid-tags-error';
 
 export interface IRegisterWallpaperUseCase {
-  execute(params: {
-    file: Express.Multer.File;
-    userId: string;
-    dto: CreateWallpaper;
-  }): Promise<string>;
+  execute(params: { file: Express.Multer.File; userId: string; dto: CreateWallpaper }): Promise<string>;
 }
 
 export class RegisterWallpaperUseCase {
@@ -18,7 +17,7 @@ export class RegisterWallpaperUseCase {
   private readonly tagService: ITagService;
   private readonly imageCompressService: IImageCompressService;
   private readonly storageService: IStorageService;
-  private readonly discordClient: DiscordClient;
+  private readonly discordClient: IDiscordClient;
   private readonly bucket: string;
 
   constructor(
@@ -26,7 +25,7 @@ export class RegisterWallpaperUseCase {
     tagService: ITagService,
     imageCompressService: IImageCompressService,
     storageService: IStorageService,
-    discordClient: DiscordClient,
+    discordClient: IDiscordClient,
   ) {
     this.wallpaperService = wallpaperService;
     this.tagService = tagService;
@@ -39,7 +38,7 @@ export class RegisterWallpaperUseCase {
   private _resolveBucket(): string {
     const bucket = process.env.STORAGE_WALLPAPER_BUCKET;
     if (!bucket) {
-      throw new Error('Missing environment variable: STORAGE_WALLPAPER_BUCKET');
+      throw new StorageConfigError('Missing environment variable: STORAGE_WALLPAPER_BUCKET');
     }
     return bucket;
   }
@@ -48,11 +47,11 @@ export class RegisterWallpaperUseCase {
     const { file, userId, dto } = params;
 
     if (!file) {
-      throw new Error('File is required');
+      throw new FileRequiredError('File is required');
     }
 
     if (!Array.isArray(dto.tagsIDs) || dto.tagsIDs.length === 0) {
-      throw new Error('`tagsIDs` must be a non-empty array');
+      throw new InvalidTagsError('`tagsIDs` must be a non-empty array');
     }
 
     const tags = await this.tagService.findAllByIds(dto.tagsIDs);

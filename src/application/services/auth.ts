@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import { IUserRepository } from '@/application/_types/users/user.types';
 import { AuthToken, IAuthService, IHashProvider } from '@/application/_types/auth/auth.type';
+import { InvalidCredential } from '@/domain/exceptions/invalid-credential';
 
 class AuthService implements IAuthService {
   private readonly userRepository: IUserRepository;
@@ -12,17 +13,13 @@ class AuthService implements IAuthService {
     this.hashProvider = hashProvider;
   }
 
-  static createInstance(userRepository: IUserRepository, hashProvider: IHashProvider): IAuthService {
-    return new AuthService(userRepository, hashProvider);
-  }
-
   async authenticate(email: string, password: string): Promise<AuthToken> {
     const user = await this.userRepository.findByEmail(email);
 
     const isValid = user && (await this.hashProvider.compare(password, user.password));
 
     if (!isValid) {
-      throw new Error('Invalid email or password');
+      throw new InvalidCredential();
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {

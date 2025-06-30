@@ -1,6 +1,8 @@
 import { ImageBufferData } from '../compress/compress.type';
 
-export interface IDiscordClient {}
+export interface IDiscordClient {
+  requestApproval(params: RequestApproval): Promise<void>;
+}
 
 export type ClientStatus = {
   online: boolean;

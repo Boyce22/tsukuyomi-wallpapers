@@ -2,16 +2,13 @@ import { Tag } from '@/domain/models/tag';
 import { TagNotFound } from '@/domain/exceptions/tag-not-found';
 import { IdNotProvided } from '@/domain/exceptions/id-not-provided';
 import { CreateTag, ITagRepository, ITagService } from '@/application/_types/tags/tag.type';
+import { TagRegistrationError } from '@/domain/exceptions/tag-registration-error';
 
 class TagService implements ITagService {
   private readonly repository: ITagRepository;
 
   constructor(repository: ITagRepository) {
     this.repository = repository;
-  }
-
-  static createInstance(repository: ITagRepository): TagService {
-    return new TagService(repository);
   }
 
   async findAllByIds(ids: string[]): Promise<Tag[]> {
@@ -34,7 +31,7 @@ class TagService implements ITagService {
       return tag.id;
     } catch (error) {
       console.error('Failed to register tag:', error);
-      throw new Error('Error while creating tag');
+      throw new TagRegistrationError('Error while creating tag');
     }
   }
 }

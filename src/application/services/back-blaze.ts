@@ -1,4 +1,5 @@
 import { IStorageService } from '@/application/_types/storage/storage.type';
+import { StorageConfigError } from '@/domain/exceptions/storage-config-error';
 
 import {
   S3Client,
@@ -16,10 +17,6 @@ class BackBlazeService implements IStorageService {
     this.s3 = this._build();
   }
 
-  static createInstance(): BackBlazeService {
-    return new BackBlazeService();
-  }
-
   private _build(): S3Client {
     const endpoint = process.env.B2_URL;
     const region = process.env.B2_REGION;
@@ -27,7 +24,7 @@ class BackBlazeService implements IStorageService {
     const secretAccessKey = process.env.B2_SECRET_KEY;
 
     if (!endpoint || !region || !accessKeyId || !secretAccessKey) {
-      throw new Error('Missing Backblaze S3 configuration environment variables');
+      throw new StorageConfigError('Missing Backblaze S3 configuration environment variables');
     }
 
     return new S3Client({
