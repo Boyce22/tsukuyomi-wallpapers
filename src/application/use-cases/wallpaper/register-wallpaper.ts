@@ -105,6 +105,7 @@ export class RegisterWallpaperUseCase {
           buffer: compressedImage.buffer,
           name: file.originalname,
         },
+        wallpaper: created,
       });
 
       return 'Upload successful. Admins will review your wallpaper.';

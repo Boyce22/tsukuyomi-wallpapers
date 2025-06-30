@@ -20,7 +20,7 @@ class WallpaperRepository implements IWallpaperRepository {
     const wallpaper = this.repository.create({
       name: dto.name,
       description: dto.description,
-      isMature: dto.isMature,
+      isMature: Boolean(dto.isMature),
       originalUrl,
       thumbnailUrl,
       tags,
