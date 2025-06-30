@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { IAuthenticateUserUseCase } from '@/application/use-cases/auth/authenticate-user';
-import { MissingFieldsError } from '@/domain/exceptions/missing-fields-error';
+import { MissingFieldsError } from '@/domain/exceptions/common/missing-fields-error';
 
 class AuthControler {
   private readonly authenticateUserUseCase: IAuthenticateUserUseCase;
@@ -16,7 +16,7 @@ class AuthControler {
       throw new MissingFieldsError('Email and password are required');
     }
 
-    const token = await this.authenticateUserUseCase.execute(email, password);
+    const token = await this.authenticateUserUseCase.authenticate(email, password);
 
     res.json(token);
   }

@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { CreateWallpaperRequest } from '@/application/_types/wallpapers/wallpaper.types';
 import { IRegisterWallpaperUseCase } from '@/application/use-cases/wallpaper/register-wallpaper';
 import { IGetOriginalSizeUseCase } from '@/application/use-cases/wallpaper/get-original-size';
-import { FileRequiredError } from '@/domain/exceptions/file-required-error';
+import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
 
 class WallpaperController {
   private readonly registerWallpaperUseCase: IRegisterWallpaperUseCase;

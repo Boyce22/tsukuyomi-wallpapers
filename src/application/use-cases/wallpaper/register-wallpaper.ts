@@ -1,33 +1,34 @@
+import { v4 as uuidv4 } from 'uuid';
 import { QualityCompress } from '@/application/_types/common/quality.enum';
-import { IImageCompressService } from '@/application/_types/compress/compress.type';
-import { IStorageService } from '@/application/_types/storage/storage.type';
-import { ITagService } from '@/application/_types/tags/tag.type';
-import { CreateWallpaper, IWallpaperService } from '@/application/_types/wallpapers/wallpaper.types';
-import { IDiscordClient } from '@/application/_types/discord/discord.types';
-import { StorageConfigError } from '@/domain/exceptions/storage-config-error';
-import { FileRequiredError } from '@/domain/exceptions/file-required-error';
-import { InvalidTagsError } from '@/domain/exceptions/invalid-tags-error';
+import { TImageCompressorService } from '@/application/ports/services/image-compressor';
+import { TStorageService } from '@/application/ports/services/storage';
+import { IFindAllTagsByIdsUseCase } from '@/application/use-cases/tag/find-all-tags-by-ids';
+import { CreateWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
+import { TDiscordService } from '@/application/ports/services/discord';
+import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
+import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
+import { InvalidTagsError } from '@/domain/exceptions/tag/invalid-tags-error';
 
 export interface IRegisterWallpaperUseCase {
   execute(params: { file: Express.Multer.File; userId: string; dto: CreateWallpaper }): Promise<string>;
 }
 
 export class RegisterWallpaperUseCase {
-  private readonly wallpaperService: IWallpaperService;
-  private readonly tagService: ITagService;
-  private readonly imageCompressService: IImageCompressService;
-  private readonly storageService: IStorageService;
-  private readonly discordClient: IDiscordClient;
+  private readonly wallpaperRepository: IWallpaperRepository;
+  private readonly tagService: IFindAllTagsByIdsUseCase;
+  private readonly imageCompressService: TImageCompressorService;
+  private readonly storageService: TStorageService;
+  private readonly discordClient: TDiscordService;
   private readonly bucket: string;
 
   constructor(
-    wallpaperService: IWallpaperService,
-    tagService: ITagService,
-    imageCompressService: IImageCompressService,
-    storageService: IStorageService,
-    discordClient: IDiscordClient,
+    wallpaperRepository: IWallpaperRepository,
+    tagService: IFindAllTagsByIdsUseCase,
+    imageCompressService: TImageCompressorService,
+    storageService: TStorageService,
+    discordClient: TDiscordService,
   ) {
-    this.wallpaperService = wallpaperService;
+    this.wallpaperRepository = wallpaperRepository;
     this.tagService = tagService;
     this.imageCompressService = imageCompressService;
     this.storageService = storageService;
@@ -54,27 +55,32 @@ export class RegisterWallpaperUseCase {
       throw new InvalidTagsError('`tagsIDs` must be a non-empty array');
     }
 
-    const tags = await this.tagService.findAllByIds(dto.tagsIDs);
+    const tags = await this.tagService.execute(dto.tagsIDs);
 
-    const { original, compressed } = await this.imageCompressService.compress({
-      path: file.path,
-      quality: QualityCompress.MEDIUM,
+    const uploadIdentifier = uuidv4(); // Unique identifier for file names in storage, not the database ID.
+
+    const compressedImage = await this.imageCompressService.compress(file.buffer, QualityCompress.HIGH, file.mimetype);
+
+    const originalUrl = `wallpapers/${userId}/${uploadIdentifier}-full.${file.mimetype.split('/')[1]}`;
+    const thumbnailUrl = `wallpapers/${userId}/${uploadIdentifier}-compress.${compressedImage.mimeType.split('/')[1]}`;
+
+    await this.storageService.upload({
+      bucket: this.bucket,
+      key: originalUrl,
+      buffer: file.buffer,
+      mimeType: file.mimetype,
     });
 
-    this.discordClient.requestApproval({
-      image: compressed,
-      userId,
+    await this.storageService.upload({
+      bucket: this.bucket,
+      key: thumbnailUrl,
+      buffer: compressedImage.buffer,
+      mimeType: compressedImage.mimeType,
     });
 
-    const compressedPath = `wallpapers/${userId}/${file.filename}-comp`;
-    const originalPath = `wallpapers/${userId}/${file.filename}-orig`;
+    const created = await this.wallpaperRepository.register(dto, tags, originalUrl, thumbnailUrl);
 
-    await Promise.all([
-      this.storageService.upload(this.bucket, originalPath, original.buffer),
-      this.storageService.upload(this.bucket, compressedPath, compressed.buffer),
-    ]);
-
-    const created = await this.wallpaperService.register(dto, tags);
+    await this.discordClient.sendWallpaper(created);
 
     return created.id;
   }

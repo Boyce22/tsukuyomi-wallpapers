@@ -9,9 +9,10 @@
     "build": "tsc --build",
     "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register --env-file=.env src/main/server.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/database.ts",
-    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/database.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/infrastructure/database/config.ts",
     "format": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:deps": "depcruise --config .dependency-cruiser.js src"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.1",
@@ -32,6 +33,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^1.4.13",
     "@types/node": "^24.0.1",
+    "dependency-cruiser": "^16.10.3",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

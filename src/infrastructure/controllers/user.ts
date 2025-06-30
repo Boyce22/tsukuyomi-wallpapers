@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { CreateUser } from '@/application/_types/users/user.types';
 import { IRegisterUserUseCase } from '@/application/use-cases/user/register-user';
 import { IChangeProfilePictureUseCase } from '@/application/use-cases/user/change-profile-picture';
-import { FileRequiredError } from '@/domain/exceptions/file-required-error';
+import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
 
 class UserController {
   private readonly registerUserUseCase: IRegisterUserUseCase;
@@ -28,7 +28,7 @@ class UserController {
 
     const id = req.userId!;
 
-    const response = await this.changeProfilePictureUseCase.execute(id, req.file);
+    const response = await this.changeProfilePictureUseCase.execute(id, req.file.path);
 
     res.status(200).json(response);
   }
