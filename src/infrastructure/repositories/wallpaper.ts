@@ -2,7 +2,7 @@ import { Tag } from '@/domain/models/tag';
 import { Repository } from 'typeorm';
 import AppDataSource from '@/infrastructure/config/database';
 import { Wallpaper } from '@/domain/models/wallpaper';
-import { CreateWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
+import { IRegisterWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
 
 class WallpaperRepository implements IWallpaperRepository {
   private repository: Repository<Wallpaper>;
@@ -16,7 +16,7 @@ class WallpaperRepository implements IWallpaperRepository {
     return wallpaper?.originalUrl ?? null;
   }
 
-  async register(dto: CreateWallpaper, tags: Tag[], originalUrl: string, thumbnailUrl: string): Promise<Wallpaper> {
+  async register({ dto, tags, originalUrl, thumbnailUrl, fileSize, format }: IRegisterWallpaper): Promise<Wallpaper> {
     const wallpaper = this.repository.create({
       name: dto.name,
       description: dto.description,
@@ -24,6 +24,8 @@ class WallpaperRepository implements IWallpaperRepository {
       originalUrl,
       thumbnailUrl,
       tags,
+      fileSize,
+      format,
     });
 
     return await this.repository.save(wallpaper);

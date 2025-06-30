@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { QualityCompress } from '@/application/_types/common/quality.enum';
 import { TImageCompressorService } from '@/application/ports/services/image-compressor';
@@ -59,29 +60,56 @@ export class RegisterWallpaperUseCase {
 
     const uploadIdentifier = uuidv4(); // Unique identifier for file names in storage, not the database ID.
 
-    const compressedImage = await this.imageCompressService.compress(file.buffer, QualityCompress.HIGH, file.mimetype);
+    const fileBuffer = await fs.readFile(file.path);
 
-    const originalUrl = `wallpapers/${userId}/${uploadIdentifier}-full.${file.mimetype.split('/')[1]}`;
-    const thumbnailUrl = `wallpapers/${userId}/${uploadIdentifier}-compress.${compressedImage.mimeType.split('/')[1]}`;
+    try {
+      const compressedImage = await this.imageCompressService.compress(
+        fileBuffer,
+        QualityCompress.MEDIUM,
+        file.mimetype,
+      );
 
-    await this.storageService.upload({
-      bucket: this.bucket,
-      key: originalUrl,
-      buffer: file.buffer,
-      mimeType: file.mimetype,
-    });
+      const mimeType = compressedImage.mimeType.split('/')[1];
 
-    await this.storageService.upload({
-      bucket: this.bucket,
-      key: thumbnailUrl,
-      buffer: compressedImage.buffer,
-      mimeType: compressedImage.mimeType,
-    });
+      const originalUrl = `wallpapers/${userId}/${uploadIdentifier}-full.${mimeType}`;
+      const thumbnailUrl = `wallpapers/${userId}/${uploadIdentifier}-compress.${mimeType}`;
 
-    const created = await this.wallpaperRepository.register(dto, tags, originalUrl, thumbnailUrl);
+      await this.storageService.upload({
+        bucket: this.bucket,
+        key: originalUrl,
+        buffer: file.buffer,
+        mimeType: file.mimetype,
+      });
 
-    await this.discordClient.sendWallpaper(created);
+      await this.storageService.upload({
+        bucket: this.bucket,
+        key: thumbnailUrl,
+        buffer: compressedImage.buffer,
+        mimeType: compressedImage.mimeType,
+      });
 
-    return created.id;
+      const created = await this.wallpaperRepository.register({
+        dto,
+        tags,
+        originalUrl,
+        thumbnailUrl,
+        fileSize: file.size,
+        format: mimeType,
+      });
+
+      console.log(`Created wallpaper with ID: ${created.id}`);
+
+      await this.discordClient.sendWallpaper({
+        userId,
+        file: {
+          buffer: compressedImage.buffer,
+          name: file.originalname,
+        },
+      });
+
+      return 'Upload successful. Admins will review your wallpaper.';
+    } finally {
+      await fs.unlink(file.path);
+    }
   }
 }

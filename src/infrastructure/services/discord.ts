@@ -1,18 +1,9 @@
-import { TDiscordService } from '@/application/ports/services/discord';
+import { IFile, TDiscordService } from '@/application/ports/services/discord';
 import { DiscordConfigError } from '@/domain/exceptions/discord/discord-config-error';
 import { InvalidDiscordChannelError } from '@/domain/exceptions/discord/invalid-discord-channel-error';
+import { Wallpaper } from '@/domain/models/wallpaper';
 
-import {
-  Client,
-  IntentsBitField,
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  TextChannel,
-  NewsChannel,
-  ThreadChannel,
-} from 'discord.js';
+import { Client, IntentsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
 class DiscordClient implements TDiscordService {
   private readonly client: Client;
@@ -62,7 +53,7 @@ class DiscordClient implements TDiscordService {
     throw new InvalidDiscordChannelError('The specified channel is not a sendable text-based channel.');
   }
 
-  async sendWallpaper(wallpaper: any): Promise<void> {
+  async sendWallpaper({ userId, file }: { userId: string; file: IFile }): Promise<void> {
     const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
     const timestamp = new Date();
 
@@ -104,7 +95,7 @@ class DiscordClient implements TDiscordService {
         },
         {
           name: 'Submitted By',
-          value: `${wallpaper.userId}`,
+          value: `${userId}`,
           inline: true,
         },
       )
@@ -120,11 +111,11 @@ class DiscordClient implements TDiscordService {
     );
 
     await channel.send({
-      content: `<@&${this.reviewerRoleId}>, a new wallpaper has been submitted for review.`,
+      content: `<@&${this.reviewerRoleId}>, your submission has been received and is under review.`,
       files: [
         {
-          attachment: wallpaper.buffer,
-          name: wallpaper.name,
+          attachment: file.buffer,
+          name: file.name,
         },
       ],
       embeds: [embed],
