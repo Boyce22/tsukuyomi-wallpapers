@@ -53,7 +53,19 @@ class DiscordClient implements TDiscordService {
     throw new InvalidDiscordChannelError('The specified channel is not a sendable text-based channel.');
   }
 
-  async sendWallpaper({ userId, file }: { userId: string; file: IFile }): Promise<void> {
+  private applyMatureContentPrefix(isMature: boolean, fileName: string) {
+    return isMature ? `SPOILER_${fileName}` : fileName;
+  }
+
+  async sendWallpaper({
+    userId,
+    file,
+    wallpaper,
+  }: {
+    userId: string;
+    file: IFile;
+    wallpaper: Wallpaper;
+  }): Promise<void> {
     const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
     const timestamp = new Date();
 
@@ -115,7 +127,7 @@ class DiscordClient implements TDiscordService {
       files: [
         {
           attachment: file.buffer,
-          name: file.name,
+          name: this.applyMatureContentPrefix(wallpaper.isMature, file.name),
         },
       ],
       embeds: [embed],

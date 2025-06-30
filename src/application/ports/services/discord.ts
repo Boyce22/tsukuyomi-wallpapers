@@ -1,8 +1,10 @@
+import { type Wallpaper } from "@/domain/models/wallpaper";
+
 export interface IFile {
   buffer: Buffer;
   name: string;
 }
 
 export type TDiscordService = {
-  sendWallpaper: ({ file, userId }: { file: IFile; userId: string }) => Promise<void>;
+  sendWallpaper: ({ file, userId, wallpaper }: { file: IFile; userId: string, wallpaper: Wallpaper }) => Promise<void>;
 };

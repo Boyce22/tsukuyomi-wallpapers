@@ -19,6 +19,7 @@ export interface IRegisterWallpaper {
   tags: Tag[],
   originalUrl: string,
   thumbnailUrl: string,
+  isMature?: boolean,
   fileSize: number,
   format: string
 }
