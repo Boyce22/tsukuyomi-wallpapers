@@ -29,13 +29,13 @@ class WallpaperController {
       throw new FileRequiredError('File is required');
     }
 
-    const wallpaperId = await this.registerWallpaperUseCase.execute({
+    const message = await this.registerWallpaperUseCase.execute({
       file,
       userId,
       dto,
     });
 
-    res.status(201).json({ id: wallpaperId });
+    res.status(201).json({ message });
   }
 }
 

@@ -16,16 +16,26 @@ class WallpaperRepository implements IWallpaperRepository {
     return wallpaper?.originalUrl ?? null;
   }
 
-  async register({ dto, tags, originalUrl, thumbnailUrl, fileSize, format }: IRegisterWallpaper): Promise<Wallpaper> {
+  async register({
+    dto: { name, description, isMature },
+    tags,
+    originalUrl,
+    thumbnailUrl,
+    fileSize,
+    format,
+    userId,
+  }: IRegisterWallpaper): Promise<Wallpaper> {
     const wallpaper = this.repository.create({
-      name: dto.name,
-      description: dto.description,
-      isMature: Boolean(dto.isMature),
+      name,
+      description,
+      isMature: Boolean(isMature),
       originalUrl,
       thumbnailUrl,
-      tags,
       fileSize,
       format,
+      tags,
+      createdBy: { id: userId },
+      updatedBy: { id: userId },
     });
 
     return await this.repository.save(wallpaper);

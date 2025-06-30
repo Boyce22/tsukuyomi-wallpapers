@@ -28,7 +28,11 @@ class UserController {
 
     const id = req.userId!;
 
-    const response = await this.changeProfilePictureUseCase.execute(id, req.file.path);
+    const response = await this.changeProfilePictureUseCase.execute(id, {
+      buffer: req.file.buffer,
+      mimetype: req.file.mimetype,
+      originalname: req.file.originalname,
+    });
 
     res.status(200).json(response);
   }
