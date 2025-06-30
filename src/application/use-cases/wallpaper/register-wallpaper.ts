@@ -1,4 +1,3 @@
-import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { QualityCompress } from '@/application/_types/common/quality.enum';
 import { TImageCompressorService } from '@/application/ports/services/image-compressor';
@@ -9,6 +8,7 @@ import { TDiscordService } from '@/application/ports/services/discord';
 import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
 import { InvalidTagsError } from '@/domain/exceptions/tag/invalid-tags-error';
+import { WallpaperRegistrationError } from '@/domain/exceptions/wallpaper/wallpaper-registration-error';
 
 export interface IRegisterWallpaperUseCase {
   execute(params: { file: Express.Multer.File; userId: string; dto: CreateWallpaper }): Promise<string>;
@@ -60,11 +60,9 @@ export class RegisterWallpaperUseCase {
 
     const uploadIdentifier = uuidv4(); // Unique identifier for file names in storage, not the database ID.
 
-    const fileBuffer = await fs.readFile(file.path);
-
     try {
       const compressedImage = await this.imageCompressService.compress(
-        fileBuffer,
+        file.buffer,
         QualityCompress.MEDIUM,
         file.mimetype,
       );
@@ -91,6 +89,7 @@ export class RegisterWallpaperUseCase {
       const created = await this.wallpaperRepository.register({
         dto,
         tags,
+        userId,
         originalUrl,
         thumbnailUrl,
         fileSize: file.size,
@@ -109,8 +108,8 @@ export class RegisterWallpaperUseCase {
       });
 
       return 'Upload successful. Admins will review your wallpaper.';
-    } finally {
-      await fs.unlink(file.path);
+    } catch (error) {
+      throw new WallpaperRegistrationError('Failed to upload wallpaper.');
     }
   }
 }

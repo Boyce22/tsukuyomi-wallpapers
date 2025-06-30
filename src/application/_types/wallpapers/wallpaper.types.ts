@@ -15,13 +15,14 @@ export interface CreateWallpaperRequest extends Request {
 }
 
 export interface IRegisterWallpaper {
-  dto: CreateWallpaper,
-  tags: Tag[],
-  originalUrl: string,
-  thumbnailUrl: string,
-  isMature?: boolean,
-  fileSize: number,
-  format: string
+  dto: CreateWallpaper;
+  tags: Tag[];
+  originalUrl: string;
+  thumbnailUrl: string;
+  isMature?: boolean;
+  fileSize: number;
+  format: string;
+  userId: string;
 }
 
 export interface IWallpaperRepository {
