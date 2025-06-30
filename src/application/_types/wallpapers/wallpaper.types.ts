@@ -14,7 +14,16 @@ export interface CreateWallpaperRequest extends Request {
   body: CreateWallpaper;
 }
 
+export interface IRegisterWallpaper {
+  dto: CreateWallpaper,
+  tags: Tag[],
+  originalUrl: string,
+  thumbnailUrl: string,
+  fileSize: number,
+  format: string
+}
+
 export interface IWallpaperRepository {
   findUrlWithOriginalSizeById(id: string): Promise<string | null>;
-  register(dto: CreateWallpaper, tags: Tag[], originalUrl: string, thumbnailUrl: string): Promise<Wallpaper>;
+  register(params: IRegisterWallpaper): Promise<Wallpaper>;
 }

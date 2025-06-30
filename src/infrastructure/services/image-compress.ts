@@ -14,7 +14,11 @@ class ImageCompressService implements TImageCompressorService {
     'image/avif': (instance, quality) => instance.avif({ quality }),
   };
 
-  async compress(image: Buffer, quality: QualityCompress, originalMimeType: string): Promise<{ buffer: Buffer; mimeType: string }> {
+  async compress(
+    image: Buffer,
+    quality: QualityCompress,
+    originalMimeType: string,
+  ): Promise<{ buffer: Buffer; mimeType: string }> {
     try {
       const sharpInstance = sharp(image);
       const formatHandler = this.formatMap[originalMimeType];
