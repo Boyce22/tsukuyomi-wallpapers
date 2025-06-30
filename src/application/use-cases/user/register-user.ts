@@ -1,5 +1,5 @@
-import { CreateUser, IUserService } from '@/application/_types/users/user.types';
-import { IAuthService } from '@/application/_types/auth/auth.type';
+import { CreateUser, IUserRepository } from '@/application/_types/users/user.types';
+import { IAuthenticateUserUseCase } from '@/application/use-cases/auth/authenticate-user';
 import { AuthToken } from '@/application/_types/auth/auth.type';
 
 export interface IRegisterUserUseCase {
@@ -7,16 +7,16 @@ export interface IRegisterUserUseCase {
 }
 
 export class RegisterUserUseCase implements IRegisterUserUseCase {
-  private readonly userService: IUserService;
-  private readonly authService: IAuthService;
+  private readonly userRepository: IUserRepository;
+  private readonly authService: IAuthenticateUserUseCase;
 
-  constructor(userService: IUserService, authService: IAuthService) {
-    this.userService = userService;
+  constructor(userRepository: IUserRepository, authService: IAuthenticateUserUseCase) {
+    this.userRepository = userRepository;
     this.authService = authService;
   }
 
   async execute(dto: CreateUser): Promise<AuthToken> {
-    const user = await this.userService.register(dto);
+    const user = await this.userRepository.register(dto);
     const token = await this.authService.authenticate(user.email, dto.password);
     return token;
   }

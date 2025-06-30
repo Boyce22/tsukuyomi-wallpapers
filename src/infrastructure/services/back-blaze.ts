@@ -1,5 +1,5 @@
-import { IStorageService } from '@/application/_types/storage/storage.type';
-import { StorageConfigError } from '@/domain/exceptions/storage-config-error';
+import { TStorageService } from '@/application/ports/services/storage';
+import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 
 import {
   S3Client,
@@ -10,7 +10,7 @@ import {
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 
-class BackBlazeService implements IStorageService {
+class BackBlazeService implements TStorageService {
   private s3: S3Client;
 
   constructor() {
@@ -49,7 +49,7 @@ class BackBlazeService implements IStorageService {
     }
   }
 
-  async getBuckets(): Promise<string[]> {
+  async getAllBuckets(): Promise<string[]> {
     try {
       const { Buckets } = await this.s3.send(new ListBucketsCommand({}));
 
@@ -78,18 +78,19 @@ class BackBlazeService implements IStorageService {
     }
   }
 
-  async upload(bucketName: string, key: string, fileBuffer: Buffer): Promise<void> {
+  async upload(params: { bucket: string; key: string; buffer: Buffer; mimeType: string }): Promise<void> {
+    const { bucket, key, buffer, mimeType } = params;
     try {
       await this.s3.send(
         new PutObjectCommand({
-          Bucket: bucketName,
+          Bucket: bucket,
           Key: key,
-          Body: fileBuffer,
-          ContentType: 'application/octet-stream',
+          Body: buffer,
+          ContentType: mimeType,
         }),
       );
     } catch (error) {
-      console.error(`Failed to upload file to bucket "${bucketName}" with key "${key}":`, error);
+      console.error(`Failed to upload file to bucket "${bucket}" with key "${key}":`, error);
       throw error;
     }
   }

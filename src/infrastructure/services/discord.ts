@@ -1,8 +1,6 @@
-import { ImageBufferData } from '@/application/_types/compress/compress.type';
-import { IDiscordClient, ClientStatus, RequestApproval } from '@/application/_types/discord/discord.types';
-import { DiscordConfigError } from '@/domain/exceptions/discord-config-error';
-import { InvalidDiscordChannelError } from '@/domain/exceptions/invalid-discord-channel-error';
-import { IWallpaperService } from '@/application/_types/wallpapers/wallpaper.types';
+import { TDiscordService } from '@/application/ports/services/discord';
+import { DiscordConfigError } from '@/domain/exceptions/discord/discord-config-error';
+import { InvalidDiscordChannelError } from '@/domain/exceptions/discord/invalid-discord-channel-error';
 
 import {
   Client,
@@ -16,7 +14,7 @@ import {
   ThreadChannel,
 } from 'discord.js';
 
-class DiscordClient implements IDiscordClient {
+class DiscordClient implements TDiscordService {
   private readonly client: Client;
   private readonly reviewerRoleId: string;
 
@@ -64,7 +62,7 @@ class DiscordClient implements IDiscordClient {
     throw new InvalidDiscordChannelError('The specified channel is not a sendable text-based channel.');
   }
 
-  async requestApproval({ image, userId }: RequestApproval): Promise<void> {
+  async sendWallpaper(wallpaper: any): Promise<void> {
     const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
     const timestamp = new Date();
 
@@ -106,7 +104,7 @@ class DiscordClient implements IDiscordClient {
         },
         {
           name: 'Submitted By',
-          value: `${userId}`,
+          value: `${wallpaper.userId}`,
           inline: true,
         },
       )
@@ -122,62 +120,16 @@ class DiscordClient implements IDiscordClient {
     );
 
     await channel.send({
-      content: `<@&${this.reviewerRoleId}>, your submission has been received and is under review.`,
+      content: `<@&${this.reviewerRoleId}>, a new wallpaper has been submitted for review.`,
       files: [
         {
-          attachment: image.buffer,
-          name: image.path,
+          attachment: wallpaper.buffer,
+          name: wallpaper.name,
         },
       ],
       embeds: [embed],
       components: [row],
     });
-  }
-
-  async isOnline(): Promise<ClientStatus> {
-    const timestamp = new Date();
-    const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
-
-    const embed = new EmbedBuilder()
-      .setTitle('Tsukuyomi - System Online')
-      .setDescription('The King of Curses has awakened. The system bends to his will.')
-      .setColor(0x8b0000)
-      .setThumbnail('https://i.ibb.co/Kx9Kvprc/wallpapersden-com-sukuna-4k-jujutsu-kaisen-art-3840x2160.jpg')
-      .addFields(
-        {
-          name: 'Status',
-          value: 'All systems under control. No disruptions tolerated.',
-          inline: false,
-        },
-        {
-          name: 'Activation Time',
-          value: timestamp.toLocaleString('pt-BR', {
-            timeZone: 'America/Sao_Paulo',
-            hour12: false,
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-          inline: false,
-        },
-      )
-      .setFooter({
-        text: 'Domain Expansion: System Supremacy',
-        iconURL: 'https://i.pinimg.com/originals/c5/a0/89/c5a08960c26b18e717ac53bf359c4238.jpg',
-      })
-      .setTimestamp();
-
-    try {
-      await channel.send({ embeds: [embed] });
-      return {
-        online: true,
-        timestamp,
-      };
-    } catch (error) {
-      console.error('Failed to establish dominance:', error);
-      throw new Error('Failed to establish dominance. Pathetic.');
-    }
   }
 }
 

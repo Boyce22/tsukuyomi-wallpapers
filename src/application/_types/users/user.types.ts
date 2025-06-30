@@ -10,11 +10,6 @@ export type CreateUser = {
   password: string;
 };
 
-export interface IUserService {
-  register(dto: CreateUser): Promise<User>;
-  changeProfilePicture(id: string, path: string): Promise<string>;
-}
-
 export interface IUserRepository {
   register(dto: CreateUser): Promise<User>;
   findByEmail(email: string): Promise<User | null>;

@@ -2,7 +2,7 @@ import { CreateTag } from '@/application/_types/tags/tag.type';
 import type { Request, Response } from 'express';
 import { IRegisterTagUseCase } from '@/application/use-cases/tag/register-tag';
 import { IFindAllTagsByIdsUseCase } from '@/application/use-cases/tag/find-all-tags-by-ids';
-import { InvalidTagsError } from '@/domain/exceptions/invalid-tags-error';
+import { InvalidTagsError } from '@/domain/exceptions/tag/invalid-tags-error';
 
 class TagController {
   private readonly registerTagUseCase: IRegisterTagUseCase;
