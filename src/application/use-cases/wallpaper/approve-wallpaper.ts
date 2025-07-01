@@ -1,5 +1,5 @@
-import { WallpaperStatus } from '@/application/_types/wallpapers/wallpaper-status.enum';
-import { IWallpaperRepository } from '@/application/ports/repositories/wallpaper';
+import { WallpaperStatus } from '@/domain/enums/wallpaper-status.enum';
+import { IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
 
 export class ApproveWallpaperUseCase {
   constructor(private readonly wallpaperRepository: IWallpaperRepository) {}

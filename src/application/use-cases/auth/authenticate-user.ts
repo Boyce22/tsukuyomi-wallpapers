@@ -1,8 +1,7 @@
-import jwt from 'jsonwebtoken';
-
 import { IUserRepository } from '@/application/_types/users/user.types';
 import { AuthToken, IHashProvider } from '@/application/_types/auth/auth.type';
 import { InvalidCredential } from '@/domain/exceptions/auth/invalid-credential';
+import { ITokenService } from '@/application/_types/auth/auth.type';
 
 export interface IAuthenticateUserUseCase {
   authenticate(email: string, password: string): Promise<AuthToken>;
@@ -11,10 +10,12 @@ export interface IAuthenticateUserUseCase {
 class AuthenticateUserUseCase implements IAuthenticateUserUseCase {
   private readonly userRepository: IUserRepository;
   private readonly hashProvider: IHashProvider;
+  private readonly tokenService: ITokenService;
 
-  constructor(userRepository: IUserRepository, hashProvider: IHashProvider) {
+  constructor(userRepository: IUserRepository, hashProvider: IHashProvider, tokenService: ITokenService) {
     this.userRepository = userRepository;
     this.hashProvider = hashProvider;
+    this.tokenService = tokenService;
   }
 
   async authenticate(email: string, password: string): Promise<AuthToken> {
@@ -26,9 +27,7 @@ class AuthenticateUserUseCase implements IAuthenticateUserUseCase {
       throw new InvalidCredential();
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
-      expiresIn: '1h',
-    });
+    const token = this.tokenService.generateToken({ id: user.id, email: user.email });
 
     return {
       accessToken: token,

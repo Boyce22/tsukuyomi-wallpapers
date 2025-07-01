@@ -1,4 +1,4 @@
-import { IFile, TDiscordService } from '@/application/ports/services/discord';
+import { IFile, TDiscordService } from '@/application/_types/wallpapers/wallpaper.types';
 import { DiscordConfigError } from '@/domain/exceptions/discord/discord-config-error';
 import { InvalidDiscordChannelError } from '@/domain/exceptions/discord/invalid-discord-channel-error';
 import { Wallpaper } from '@/domain/models/wallpaper';
@@ -8,8 +8,12 @@ import { Client, IntentsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder,
 class DiscordClient implements TDiscordService {
   private readonly client: Client;
   private readonly reviewerRoleId: string;
+  private readonly discordChannel: string;
 
   constructor(
+    discordToken: string,
+    reviewerRoleId: string,
+    discordChannel: string,
     public readonly onApprove: (interaction: any) => Promise<void>,
     public readonly onReject: (interaction: any) => Promise<void>,
   ) {
@@ -21,17 +25,10 @@ class DiscordClient implements TDiscordService {
       ],
     });
 
-    this.reviewerRoleId = this._addReviewerRoleId();
+    this.reviewerRoleId = reviewerRoleId;
+    this.discordChannel = discordChannel;
 
-    this._buildDiscordClient();
-  }
-
-  private _buildDiscordClient() {
-    if (!process.env.DISCORD_TOKEN) {
-      throw new DiscordConfigError('Missing environment variable: DISCORD_TOKEN');
-    }
-
-    this.client.login(process.env.DISCORD_TOKEN);
+    this.client.login(discordToken);
 
     this.client.on('interactionCreate', async (interaction) => {
       if (!interaction.isButton()) return;
@@ -42,14 +39,6 @@ class DiscordClient implements TDiscordService {
         await this.onReject(interaction);
       }
     });
-  }
-
-  private _addReviewerRoleId() {
-    if (!process.env.DISCORD_REVIEWER_ROLE_ID) {
-      throw new DiscordConfigError('Missing environment variable: DISCORD_REVIEWER_ROLE_ID');
-    }
-
-    return process.env.DISCORD_REVIEWER_ROLE_ID;
   }
 
   private async getTextChannel(channelId: string): Promise<any> {
@@ -79,7 +68,7 @@ class DiscordClient implements TDiscordService {
     file: IFile;
     wallpaper: Wallpaper;
   }): Promise<void> {
-    const channel = await this.getTextChannel(process.env.DISCORD_CHANNEL!);
+    const channel = await this.getTextChannel(this.discordChannel);
     const timestamp = new Date();
 
     const embed = new EmbedBuilder()

@@ -1,8 +1,8 @@
 import { IUserRepository } from '@/application/_types/users/user.types';
 import { ProfilePictureChangeError } from '@/domain/exceptions/user/profile-picture-change-error';
-import { TStorageService } from '@/application/ports/services/storage';
-import { TImageCompressorService } from '@/application/ports/services/image-compressor';
-import { QualityCompress } from '@/application/_types/common/quality.enum';
+import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types';
+import { TImageCompressorService } from '@/application/_types/wallpapers/wallpaper.types';
+import { QualityCompress } from '@/domain/enums/quality.enum';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
 import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 
@@ -20,21 +20,12 @@ export class ChangeProfilePictureUseCase implements IChangeProfilePictureUseCase
     repository: IUserRepository,
     storageService: TStorageService,
     imageCompressorService: TImageCompressorService,
+    bucket: string,
   ) {
     this.repository = repository;
     this.storageService = storageService;
     this.imageCompressorService = imageCompressorService;
-    this.bucket = this._resolveBucket();
-  }
-
-  private _resolveBucket(): string {
-    const bucket = process.env.STORAGE_PROFILE_PICTURE_BUCKET;
-
-    if (!bucket) {
-      throw new StorageConfigError('Missing environment variable: STORAGE_PROFILE_PICTURE_BUCKET');
-    }
-
-    return bucket;
+    this.bucket = bucket;
   }
 
   async execute(id: string, file: { buffer: Buffer; mimetype: string; originalname: string }): Promise<string> {

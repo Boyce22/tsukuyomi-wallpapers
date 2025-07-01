@@ -1,4 +1,4 @@
-import { TStorageService } from '@/application/ports/services/storage';
+import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types';
 
 export interface IGetAllBucketsUseCase {
   execute(): Promise<string[]>;

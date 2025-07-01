@@ -1,18 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
-import { QualityCompress } from '@/application/_types/common/quality.enum';
-import { TImageCompressorService } from '@/application/ports/services/image-compressor';
-import { TStorageService } from '@/application/ports/services/storage';
+import { QualityCompress } from '@/domain/enums/quality.enum';
+import { TImageCompressorService } from '@/application/_types/wallpapers/wallpaper.types';
+import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types';
 import { IFindAllTagsByIdsUseCase } from '@/application/use-cases/tag/find-all-tags-by-ids';
 import { CreateWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
-import { WallpaperStatus } from '@/application/_types/wallpapers/wallpaper-status.enum';
-import { TDiscordService } from '@/application/ports/services/discord';
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
+import { WallpaperStatus } from '@/domain/enums/wallpaper-status.enum';
+import { TDiscordService } from '@/application/_types/wallpapers/wallpaper.types';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
 import { InvalidTagsError } from '@/domain/exceptions/tag/invalid-tags-error';
 import { WallpaperRegistrationError } from '@/domain/exceptions/wallpaper/wallpaper-registration-error';
 
 export interface IRegisterWallpaperUseCase {
-  execute(params: { file: Express.Multer.File; userId: string; dto: CreateWallpaper }): Promise<string>;
+  execute(params: {
+    file: {
+      buffer: Buffer;
+      mimetype: string;
+      originalname: string;
+      size: number;
+    };
+    userId: string;
+    dto: CreateWallpaper;
+  }): Promise<string>;
 }
 
 export class RegisterWallpaperUseCase {
@@ -29,24 +37,26 @@ export class RegisterWallpaperUseCase {
     imageCompressService: TImageCompressorService,
     storageService: TStorageService,
     discordClient: TDiscordService,
+    bucket: string,
   ) {
     this.wallpaperRepository = wallpaperRepository;
     this.tagService = tagService;
     this.imageCompressService = imageCompressService;
     this.storageService = storageService;
     this.discordClient = discordClient;
-    this.bucket = this._resolveBucket();
+    this.bucket = bucket;
   }
 
-  private _resolveBucket(): string {
-    const bucket = process.env.STORAGE_WALLPAPER_BUCKET;
-    if (!bucket) {
-      throw new StorageConfigError('Missing environment variable: STORAGE_WALLPAPER_BUCKET');
-    }
-    return bucket;
-  }
-
-  async execute(params: { file: Express.Multer.File; userId: string; dto: CreateWallpaper }): Promise<string> {
+  async execute(params: {
+    file: {
+      buffer: Buffer;
+      mimetype: string;
+      originalname: string;
+      size: number;
+    };
+    userId: string;
+    dto: CreateWallpaper;
+  }): Promise<string> {
     const { file, userId, dto } = params;
 
     if (!file) {

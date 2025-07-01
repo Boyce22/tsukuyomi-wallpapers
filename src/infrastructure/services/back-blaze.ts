@@ -1,4 +1,4 @@
-import { TStorageService } from '@/application/ports/services/storage';
+import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types';
 import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 
 import {
@@ -13,21 +13,13 @@ import {
 class BackBlazeService implements TStorageService {
   private s3: S3Client;
 
-  constructor() {
-    this.s3 = this._build();
-  }
-
-  private _build(): S3Client {
-    const endpoint = process.env.B2_URL;
-    const region = process.env.B2_REGION;
-    const accessKeyId = process.env.B2_KEY_ID;
-    const secretAccessKey = process.env.B2_SECRET_KEY;
-
-    if (!endpoint || !region || !accessKeyId || !secretAccessKey) {
-      throw new StorageConfigError('Missing Backblaze S3 configuration environment variables');
-    }
-
-    return new S3Client({
+  constructor(
+    endpoint: string,
+    region: string,
+    accessKeyId: string,
+    secretAccessKey: string,
+  ) {
+    this.s3 = new S3Client({
       endpoint,
       region,
       credentials: {

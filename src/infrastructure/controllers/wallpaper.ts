@@ -1,8 +1,13 @@
 import type { Request, Response } from 'express';
-import { CreateWallpaperRequest } from '@/application/_types/wallpapers/wallpaper.types';
+import { CreateWallpaper } from '@/application/_types/wallpapers/wallpaper.types';
 import { IRegisterWallpaperUseCase } from '@/application/use-cases/wallpaper/register-wallpaper';
 import { IGetOriginalSizeUseCase } from '@/application/use-cases/wallpaper/get-original-size';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
+
+export interface CreateWallpaperRequest extends Request {
+  file?: Express.Multer.File;
+  body: CreateWallpaper;
+}
 
 class WallpaperController {
   private readonly registerWallpaperUseCase: IRegisterWallpaperUseCase;
@@ -30,7 +35,12 @@ class WallpaperController {
     }
 
     const message = await this.registerWallpaperUseCase.execute({
-      file,
+      file: {
+        buffer: file.buffer,
+        mimetype: file.mimetype,
+        originalname: file.originalname,
+        size: file.size,
+      },
       userId,
       dto,
     });

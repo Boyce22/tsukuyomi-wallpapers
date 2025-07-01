@@ -1,9 +1,9 @@
 import path from 'path';
 import sharp, { Sharp } from 'sharp';
 import { ImageCompressionError } from '@/domain/exceptions/compress/image-compression-error';
-import { TImageCompressorService } from '@/application/ports/services/image-compressor';
+import { TImageCompressorService } from '@/application/_types/wallpapers/wallpaper.types';
 
-import { QualityCompress } from '@/application/_types/common/quality.enum';
+import { QualityCompress } from '@/domain/enums/quality.enum';
 import { UnsupportedImageFormatError } from '@/domain/exceptions/compress/unsupported-image-format-error';
 
 class ImageCompressService implements TImageCompressorService {
