@@ -12,6 +12,8 @@ import {
 import { Tag } from './tag';
 import { User } from './user';
 
+import { WallpaperStatus } from '@/application/_types/wallpapers/wallpaper-status.enum';
+
 @Entity('wallpaper')
 export class Wallpaper {
   @PrimaryGeneratedColumn('uuid')
@@ -32,8 +34,11 @@ export class Wallpaper {
   @Column({ default: false })
   isMature!: boolean;
 
-  @Column({ default: false })
+  @Column({ default: true })
   isActive!: boolean;
+
+  @Column({ type: 'enum', enum: WallpaperStatus, default: WallpaperStatus.PENDING })
+  status!: WallpaperStatus;
 
   @CreateDateColumn()
   createdAt!: Date;

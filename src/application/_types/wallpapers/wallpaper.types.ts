@@ -14,6 +14,8 @@ export interface CreateWallpaperRequest extends Request {
   body: CreateWallpaper;
 }
 
+import { WallpaperStatus } from './wallpaper-status.enum';
+
 export interface IRegisterWallpaper {
   dto: CreateWallpaper;
   tags: Tag[];
@@ -23,9 +25,11 @@ export interface IRegisterWallpaper {
   fileSize: number;
   format: string;
   userId: string;
+  status: WallpaperStatus;
 }
 
 export interface IWallpaperRepository {
   findUrlWithOriginalSizeById(id: string): Promise<string | null>;
   register(params: IRegisterWallpaper): Promise<Wallpaper>;
+  updateStatus(id: string, status: WallpaperStatus): Promise<void>;
 }

@@ -1,10 +1,10 @@
-import { Tag } from '@/domain/models/tag';
 import { Repository } from 'typeorm';
 import AppDataSource from '@/infrastructure/config/database';
 import { Wallpaper } from '@/domain/models/wallpaper';
 import { IRegisterWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
+import { WallpaperStatus } from '@/application/_types/wallpapers/wallpaper-status.enum';
 
-class WallpaperRepository implements IWallpaperRepository {
+export default class WallpaperRepository implements IWallpaperRepository {
   private repository: Repository<Wallpaper>;
 
   constructor() {
@@ -24,6 +24,7 @@ class WallpaperRepository implements IWallpaperRepository {
     fileSize,
     format,
     userId,
+    status,
   }: IRegisterWallpaper): Promise<Wallpaper> {
     const wallpaper = this.repository.create({
       name,
@@ -36,10 +37,13 @@ class WallpaperRepository implements IWallpaperRepository {
       tags,
       createdBy: { id: userId },
       updatedBy: { id: userId },
+      status,
     });
 
     return await this.repository.save(wallpaper);
   }
-}
 
-export default WallpaperRepository;
+  async updateStatus(id: string, status: WallpaperStatus): Promise<void> {
+    await this.repository.update(id, { status });
+  }
+}

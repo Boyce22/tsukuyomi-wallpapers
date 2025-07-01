@@ -15,7 +15,11 @@ export const makeUserController = () => {
   const registerUserUseCase = new RegisterUserUseCase(userRepository, authenticateUserUseCase);
   const imageCompressService = new ImageCompressService();
   const storageService = new BackBlazeService();
-  const changeProfilePictureUseCase = new ChangeProfilePictureUseCase(userRepository, storageService, imageCompressService);
+  const changeProfilePictureUseCase = new ChangeProfilePictureUseCase(
+    userRepository,
+    storageService,
+    imageCompressService,
+  );
 
   return new UserController(registerUserUseCase, changeProfilePictureUseCase);
 };

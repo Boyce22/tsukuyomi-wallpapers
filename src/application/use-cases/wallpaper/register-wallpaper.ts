@@ -4,6 +4,7 @@ import { TImageCompressorService } from '@/application/ports/services/image-comp
 import { TStorageService } from '@/application/ports/services/storage';
 import { IFindAllTagsByIdsUseCase } from '@/application/use-cases/tag/find-all-tags-by-ids';
 import { CreateWallpaper, IWallpaperRepository } from '@/application/_types/wallpapers/wallpaper.types';
+import { WallpaperStatus } from '@/application/_types/wallpapers/wallpaper-status.enum';
 import { TDiscordService } from '@/application/ports/services/discord';
 import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
@@ -94,6 +95,7 @@ export class RegisterWallpaperUseCase {
         thumbnailUrl,
         fileSize: file.size,
         format: mimeType,
+        status: WallpaperStatus.PENDING,
       });
 
       console.log(`Created wallpaper with ID: ${created.id}`);
