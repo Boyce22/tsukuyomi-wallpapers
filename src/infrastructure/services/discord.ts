@@ -9,7 +9,10 @@ class DiscordClient implements TDiscordService {
   private readonly client: Client;
   private readonly reviewerRoleId: string;
 
-  constructor() {
+  constructor(
+    public readonly onApprove: (interaction: any) => Promise<void>,
+    public readonly onReject: (interaction: any) => Promise<void>,
+  ) {
     this.client = new Client({
       intents: [
         IntentsBitField.Flags.Guilds,
@@ -29,6 +32,16 @@ class DiscordClient implements TDiscordService {
     }
 
     this.client.login(process.env.DISCORD_TOKEN);
+
+    this.client.on('interactionCreate', async (interaction) => {
+      if (!interaction.isButton()) return;
+
+      if (interaction.customId === 'approve_wallpaper') {
+        await this.onApprove(interaction);
+      } else if (interaction.customId === 'decline_wallpaper') {
+        await this.onReject(interaction);
+      }
+    });
   }
 
   private _addReviewerRoleId() {
@@ -112,7 +125,7 @@ class DiscordClient implements TDiscordService {
         },
       )
       .setFooter({
-        text: 'Tsukuyomi Protocol: Submission Assessment',
+        text: `Tsukuyomi Protocol: Submission Assessment - Wallpaper ID: ${wallpaper.id}`,
         iconURL: 'https://i.pinimg.com/originals/c5/a0/89/c5a08960c26b18e717ac53bf359c4238.jpg',
       })
       .setTimestamp();
