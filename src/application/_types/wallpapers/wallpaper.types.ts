@@ -1,8 +1,6 @@
 import { Tag } from '@/domain/models/tag';
 import { Wallpaper } from '@/domain/models/wallpaper';
 
-import { Wallpaper } from '@/domain/models/wallpaper';
-
 export interface IFile {
   buffer: Buffer;
   name: string;

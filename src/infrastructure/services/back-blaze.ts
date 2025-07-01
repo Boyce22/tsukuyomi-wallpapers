@@ -1,5 +1,4 @@
 import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types';
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 
 import {
   S3Client,

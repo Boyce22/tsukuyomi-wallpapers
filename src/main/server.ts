@@ -14,7 +14,7 @@ app.use(express.json());
 app.use('/tsukuyomi/v1', routes);
 
 // Middleware global de tratamento de erros
-app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   const isProd = env.NODE_ENV === 'production';
   const statusCode = err.status || 500;
   const message = err.message || 'Internal Server Error';

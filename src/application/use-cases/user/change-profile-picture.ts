@@ -4,7 +4,6 @@ import { TStorageService } from '@/application/_types/wallpapers/wallpaper.types
 import { TImageCompressorService } from '@/application/_types/wallpapers/wallpaper.types';
 import { QualityCompress } from '@/domain/enums/quality.enum';
 import { FileRequiredError } from '@/domain/exceptions/common/file-required-error';
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 
 export interface IChangeProfilePictureUseCase {
   execute(id: string, file: { buffer: Buffer; mimetype: string; originalname: string }): Promise<string>;

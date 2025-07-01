@@ -1,4 +1,3 @@
-import path from 'path';
 import sharp, { Sharp } from 'sharp';
 import { ImageCompressionError } from '@/domain/exceptions/compress/image-compression-error';
 import { TImageCompressorService } from '@/application/_types/wallpapers/wallpaper.types';

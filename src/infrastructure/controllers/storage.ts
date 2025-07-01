@@ -8,7 +8,7 @@ class StorageController {
     this.getAllBucketsUseCase = getAllBucketsUseCase;
   }
 
-  async getBuckets(req: Request, res: Response): Promise<void> {
+  async getBuckets(_req: Request, res: Response): Promise<void> {
     const buckets = await this.getAllBucketsUseCase.execute();
 
     res.status(200).json({ buckets });

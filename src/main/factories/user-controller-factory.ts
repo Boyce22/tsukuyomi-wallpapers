@@ -1,4 +1,3 @@
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 import UserController from '@/infrastructure/controllers/user';
 import { RegisterUserUseCase } from '@/application/use-cases/user/register-user';
 import { ChangeProfilePictureUseCase } from '@/application/use-cases/user/change-profile-picture';

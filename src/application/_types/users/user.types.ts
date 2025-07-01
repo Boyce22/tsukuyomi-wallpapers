@@ -1,5 +1,4 @@
 import type { User } from '@/domain/models/user';
-import { AuthToken } from '../auth/auth.type';
 
 export type CreateUser = {
   email: string;

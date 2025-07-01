@@ -1,4 +1,3 @@
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 import StorageController from '@/infrastructure/controllers/storage';
 import { GetAllBucketsUseCase } from '@/application/use-cases/storage/get-all-buckets';
 import BackBlazeService from '@/infrastructure/services/back-blaze';

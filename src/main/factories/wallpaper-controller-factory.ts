@@ -1,4 +1,3 @@
-import { StorageConfigError } from '@/domain/exceptions/storage/storage-config-error';
 import WallpaperController from '@/infrastructure/controllers/wallpaper';
 import { RegisterWallpaperUseCase } from '@/application/use-cases/wallpaper/register-wallpaper';
 import { GetOriginalSizeUseCase } from '@/application/use-cases/wallpaper/get-original-size';

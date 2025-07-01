@@ -1,5 +1,4 @@
 import { IFile, TDiscordService } from '@/application/_types/wallpapers/wallpaper.types';
-import { DiscordConfigError } from '@/domain/exceptions/discord/discord-config-error';
 import { InvalidDiscordChannelError } from '@/domain/exceptions/discord/invalid-discord-channel-error';
 import { Wallpaper } from '@/domain/models/wallpaper';
 
