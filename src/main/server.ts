@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 
-import routes from '@/infrastructure/routes/_index';
-import AppDataSource from '@/infrastructure/config/database';
+import routes from './routes/_index';
+import AppDataSource from '../shared/infrastructure/config/database';
 
 const app = express();
 const PORT = process.env.PORT || 8080;

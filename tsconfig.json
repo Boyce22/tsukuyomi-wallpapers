@@ -9,7 +9,12 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@auth/*": ["src/auth/*"],
+      "@tags/*": ["src/tags/*"],
+      "@users/*": ["src/users/*"],
+      "@wallpapers/*": ["src/wallpapers/*"],
+      "@shared/*": ["src/shared/*"],
+      "@main/*": ["src/main/*"]
     },
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist", // pasta onde o JS compilado vai
