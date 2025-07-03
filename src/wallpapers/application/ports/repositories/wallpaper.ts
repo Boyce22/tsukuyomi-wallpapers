@@ -5,5 +5,5 @@ import { WallpaperStatus } from '@wallpapers/types/wallpaper-status.enum';
 export interface IWallpaperRepository {
   findUrlWithOriginalSizeById(id: string): Promise<string | null>;
   register(params: IRegisterWallpaper): Promise<Wallpaper>;
-  updateStatus(id: string, status: WallpaperStatus): Promise<void>;
+  updateStatus(id: string, status: WallpaperStatus, reportReason?: string): Promise<void>;
 }

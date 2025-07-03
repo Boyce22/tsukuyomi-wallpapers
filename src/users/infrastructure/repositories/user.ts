@@ -1,6 +1,6 @@
 import { User } from '../../domain/models/user';
 import { Repository } from 'typeorm';
-import AppDataSource from '../../../shared/infrastructure/config/database';
+import AppDataSource from '@shared/infrastructure/config/database';
 import { CreateUser, IUserRepository } from '../../types/user.types';
 
 class UserRepository implements IUserRepository {

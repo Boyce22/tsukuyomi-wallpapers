@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import AppDataSource from '../../../shared/infrastructure/config/database';
+import AppDataSource from '@shared/infrastructure/config/database';
 import { Wallpaper } from '../../domain/models/wallpaper';
 import { IRegisterWallpaper, IWallpaperRepository } from '../../types/wallpaper.types';
 import { WallpaperStatus } from '../../types/wallpaper-status.enum';
@@ -43,7 +43,7 @@ export default class WallpaperRepository implements IWallpaperRepository {
     return await this.repository.save(wallpaper);
   }
 
-  async updateStatus(id: string, status: WallpaperStatus): Promise<void> {
-    await this.repository.update(id, { status });
+  async updateStatus(id: string, status: WallpaperStatus, reportReason?: string): Promise<void> {
+    await this.repository.update(id, { status, reportReason });
   }
 }

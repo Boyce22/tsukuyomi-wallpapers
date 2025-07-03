@@ -1,5 +1,5 @@
-import { UrlNotFound } from '../../../shared/domain/exceptions/url-not-found';
-import { UrlNotProvided } from '../../../shared/domain/exceptions/url-not-provided';
+import { UrlNotFound } from '@shared/domain/exceptions/url-not-found';
+import { UrlNotProvided } from '@shared/domain/exceptions/url-not-provided';
 import { IWallpaperRepository } from '../ports/repositories/wallpaper';
 
 export interface IGetOriginalSizeUseCase {

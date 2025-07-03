@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { IAuthenticateUserUseCase } from '../../application/use-cases/authenticate-user';
-import { MissingFieldsError } from '../../../shared/domain/exceptions/missing-fields-error';
+import { MissingFieldsError } from '@shared/domain/exceptions/missing-fields-error';
 
 class AuthControler {
   private readonly authenticateUserUseCase: IAuthenticateUserUseCase;

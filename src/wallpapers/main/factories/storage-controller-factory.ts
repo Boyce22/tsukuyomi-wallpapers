@@ -1,5 +1,5 @@
-import StorageController from '@shared/infrastructure/controllers/storage';
-import { GetAllBucketsUseCase } from '@shared/application/use-cases/get-all-buckets';
+import StorageController from '@wallpapers/infrastructure/controllers/storage';
+import { GetAllBucketsUseCase } from '@wallpapers/application/use-cases/get-all-buckets';
 import BackBlazeService from '@shared/infrastructure/services/back-blaze';
 
 export const makeStorageController = () => {

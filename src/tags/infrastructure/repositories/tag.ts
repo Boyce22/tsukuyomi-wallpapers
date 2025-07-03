@@ -1,6 +1,6 @@
 import { Tag } from '../../domain/models/tag';
 import { In, Repository } from 'typeorm';
-import AppDataSource from '../../../shared/infrastructure/config/database';
+import AppDataSource from '@shared/infrastructure/config/database';
 
 import { CreateTag, ITagRepository } from '../../types/tag.type';
 

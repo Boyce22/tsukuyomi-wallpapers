@@ -1,7 +1,7 @@
 import { IUserRepository } from '../../types/user.types';
 import { ProfilePictureChangeError } from '@users/domain/exceptions/profile-picture-change-error';
-import { TStorageService } from '../../../shared/application/ports/services/storage';
-import { TImageCompressorService } from '../../../shared/application/ports/services/image-compressor';
+import { TStorageService } from '@shared/application/ports/services/storage';
+import { TImageCompressorService } from '@shared/application/ports/services/image-compressor';
 import { QualityCompress } from '@shared/types/quality.enum';
 import { FileRequiredError } from '@shared/domain/exceptions/file-required-error';
 import { StorageConfigError } from '@shared/domain/exceptions/storage-config-error';

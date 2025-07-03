@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { makeStorageController } from '@shared/main/factories/storage-controller-factory';
+import { makeStorageController } from '@wallpapers/main/factories/storage-controller-factory';
 
 export const createStorageRouter = () => {
   const router = Router();

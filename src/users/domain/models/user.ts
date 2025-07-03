@@ -1,4 +1,4 @@
-import { Role } from '../../../shared/domain/models/role';
+import { Role } from '@role/domain/models/role';
 import { Tag } from '../../../tags/domain/models/tag';
 import { Wallpaper } from '../../../wallpapers/domain/models/wallpaper';
 
@@ -48,7 +48,7 @@ export class User {
   @OneToMany(() => Tag, (tag) => tag.updatedBy)
   updatedTags!: Tag[];
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role: Role) => role.users)
   @JoinTable({ name: 'user_role' })
   roles!: Role[];
 }

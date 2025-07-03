@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { createUserRouter } from '@users/infrastructure/routes/user';
 import { createTagsRouter } from '@tags/infrastructure/routes/tags';
-import { createStorageRouter } from '@shared/infrastructure/routes/storage';
+import { createStorageRouter } from '@wallpapers/infrastructure/routes/storage';
 import { createWallpaperRouter } from '@wallpapers/infrastructure/routes/wallpaper';
 import { createAuthRouter } from '../../auth/infrastructure/routes/auth';
 

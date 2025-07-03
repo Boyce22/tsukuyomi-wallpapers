@@ -1,8 +1,8 @@
-import multer from '../../../shared/infrastructure/config/multer';
+import multer from '@shared/infrastructure/config/multer';
 
 import { Router, type Request, type Response } from 'express';
 
-import { authenticate } from '../../../shared/infrastructure/middlewares/auth';
+import { authenticate } from '@shared/infrastructure/middlewares/auth';
 import { makeWallpaperController } from '@wallpapers/main/factories/wallpaper-controller-factory';
 
 export const createWallpaperRouter = () => {

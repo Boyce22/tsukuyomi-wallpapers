@@ -1,6 +1,6 @@
-import multer from '../../../shared/infrastructure/config/multer';
+import multer from '@shared/infrastructure/config/multer';
 
-import { authenticate } from '../../../shared/infrastructure/middlewares/auth';
+import { authenticate } from '@shared/infrastructure/middlewares/auth';
 
 import { Router, type Request, type Response } from 'express';
 import { makeUserController } from '@users/main/factories/user-controller-factory';
