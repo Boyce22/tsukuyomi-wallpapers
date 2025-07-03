@@ -1,6 +1,6 @@
 import { Tag } from '../../domain/models/tag';
 import { TagNotFound } from '../../domain/exceptions/tag-not-found';
-import { IdNotProvided } from '../../../shared/domain/exceptions/id-not-provided';
+import { IdNotProvided } from '@shared/domain/exceptions/id-not-provided';
 import { ITagRepository } from '../../types/tag.type';
 export interface IFindAllTagsByIdsUseCase {
   execute(ids: string[]): Promise<Tag[]>;

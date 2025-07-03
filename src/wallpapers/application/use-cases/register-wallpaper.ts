@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
-import { QualityCompress } from '../../../shared/types/quality.enum';
-import { TImageCompressorService } from '../../../shared/application/ports/services/image-compressor';
-import { TStorageService } from '../../../shared/application/ports/services/storage';
+import { QualityCompress } from '@shared/types/quality.enum';
+import { TImageCompressorService } from '@shared/application/ports/services/image-compressor';
+import { TStorageService } from '@shared/application/ports/services/storage';
 import { IFindAllTagsByIdsUseCase } from '@tags/application/use-cases/find-all-tags-by-ids';
 import { CreateWallpaper, IWallpaperRepository } from '@wallpapers/types/wallpaper.types';
 import { WallpaperStatus } from '@wallpapers/types/wallpaper-status.enum';
-import { TDiscordService } from '../../../shared/application/ports/services/discord';
-import { StorageConfigError } from '../../../shared/domain/exceptions/storage-config-error';
-import { FileRequiredError } from '../../../shared/domain/exceptions/file-required-error';
+import { TDiscordService } from '@shared/application/ports/services/discord';
+import { StorageConfigError } from '@shared/domain/exceptions/storage-config-error';
+import { FileRequiredError } from '@shared/domain/exceptions/file-required-error';
 import { InvalidTagsError } from '../../../tags/domain/exceptions/invalid-tags-error';
 import { WallpaperRegistrationError } from '@wallpapers/domain/exceptions/wallpaper-registration-error';
 

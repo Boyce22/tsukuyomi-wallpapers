@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Tag } from '../../../tags/domain/models/tag';
-import { User } from '../../../users/domain/models/user';
+import { Tag } from '@tags/domain/models/tag';
+import { User } from '@users/domain/models/user';
 
 import { WallpaperStatus } from '@wallpapers/types/wallpaper-status.enum';
 
@@ -57,6 +57,9 @@ export class Wallpaper {
 
   @Column({ default: 0 })
   downloadCount!: number;
+
+  @Column({ nullable: true, length: 512 })
+  reportReason!: string;
 
   @ManyToOne(() => User, (user) => user.createdWallpapers, { nullable: true })
   createdBy?: User;

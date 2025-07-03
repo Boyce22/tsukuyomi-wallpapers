@@ -1,4 +1,4 @@
-import { TStorageService } from '../ports/services/storage';
+import { TStorageService } from '@shared/application/ports/services/storage';
 
 export interface IGetAllBucketsUseCase {
   execute(): Promise<string[]>;

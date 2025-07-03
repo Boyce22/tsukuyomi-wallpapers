@@ -2,17 +2,18 @@ import WallpaperController from '@wallpapers/infrastructure/controllers/wallpape
 import { RegisterWallpaperUseCase } from '@wallpapers/application/use-cases/register-wallpaper';
 import { GetOriginalSizeUseCase } from '@wallpapers/application/use-cases/get-original-size';
 
-import { FindAllTagsByIdsUseCase } from '../../../tags/application/use-cases/find-all-tags-by-ids';
-import ImageCompressService from '../../../shared/infrastructure/services/image-compress';
-import BackBlazeService from '../../../shared/infrastructure/services/back-blaze';
-import DiscordClient from '../../../shared/infrastructure/services/discord';
+import { FindAllTagsByIdsUseCase } from '@tags/application/use-cases/find-all-tags-by-ids';
+import ImageCompressService from '@shared/infrastructure/services/image-compress';
+import BackBlazeService from '@shared/infrastructure/services/back-blaze';
+import DiscordClient from '@shared/infrastructure/services/discord';
 
 import WallpaperRepository from '@wallpapers/infrastructure/repositories/wallpaper';
 import { TagRepository } from '@tags/infrastructure/repositories/tag';
 
 import { ApproveWallpaperUseCase } from '@wallpapers/application/use-cases/approve-wallpaper';
 import { RejectWallpaperUseCase } from '@wallpapers/application/use-cases/reject-wallpaper';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
+import { ReportWallpaperUseCase } from '@wallpapers/application/use-cases/report-wallpaper';
 
 export const makeWallpaperController = () => {
   const wallpaperRepository = new WallpaperRepository();
@@ -23,6 +24,7 @@ export const makeWallpaperController = () => {
 
   const approveWallpaperUseCase = new ApproveWallpaperUseCase(wallpaperRepository);
   const rejectWallpaperUseCase = new RejectWallpaperUseCase(wallpaperRepository);
+  const reportWallpaperUseCase = new ReportWallpaperUseCase(wallpaperRepository);
 
   const discordClient = new DiscordClient(
     async (interaction) => {
@@ -55,25 +57,52 @@ export const makeWallpaperController = () => {
 
     async (interaction) => {
       const wallpaperId = interaction.message.embeds[0].footer.text.split('Wallpaper ID: ')[1];
-
       await rejectWallpaperUseCase.execute(wallpaperId);
 
       const embed = new EmbedBuilder()
         .setTitle('Decree Issued: Wallpaper Rejected')
         .setDescription(
           [
-            'Judgment has been rendered.',
-            'The submission has failed to meet the standards of the realm.',
+            'Your judgment has been cast.',
+            'The image has been rejected and removed from the domain.',
             '',
-            'This rejection is absolute.',
+            'Let this rejection echo through the void.',
             '',
-            'The system will not entertain appeals.',
+            'The system acknowledges your verdict as final.',
           ].join('\n'),
         )
         .setColor(0xff0000)
         .setThumbnail('https://i.ibb.co/Kx9Kvprc/wallpapersden-com-sukuna-4k-jujutsu-kaisen-art-3840x2160.jpg')
         .setFooter({
           text: `Tsukuyomi Protocol: Rejection Finalized - Wallpaper ID: ${wallpaperId}`,
+          iconURL: 'https://i.pinimg.com/originals/c5/a0/89/c5a08960c26b18e717ac53bf359c4238.jpg',
+        })
+        .setTimestamp();
+
+      await interaction.update({ embeds: [embed], components: [] });
+    },
+
+    async (interaction, wallpaperId, reportReason) => {
+      await reportWallpaperUseCase.execute(wallpaperId, reportReason);
+
+      const embed = new EmbedBuilder()
+        .setTitle('Decree Issued: Wallpaper Reported')
+        .setDescription(
+          [
+            'Judgment has been rendered.',
+            'The submission has failed to meet the standards of the realm.',
+            '',
+            `Reason: ${reportReason}`,
+            '',
+            'This rejection is absolute.',
+            '',
+            'The system will not entertain appeals.',
+          ].join('\n'),
+        )
+        .setColor(0xffa500)
+        .setThumbnail('https://i.ibb.co/Kx9Kvprc/wallpapersden-com-sukuna-4k-jujutsu-kaisen-art-3840x2160.jpg')
+        .setFooter({
+          text: `Tsukuyomi Protocol: Report Finalized - Wallpaper ID: ${wallpaperId}`,
           iconURL: 'https://i.pinimg.com/originals/c5/a0/89/c5a08960c26b18e717ac53bf359c4238.jpg',
         })
         .setTimestamp();

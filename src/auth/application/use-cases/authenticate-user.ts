@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { IUserRepository } from '../../../users/types/user.types';
+import { IUserRepository } from '@users/types/user.types';
 import { AuthToken, IHashProvider } from '../../types/auth.type';
 import { InvalidCredential } from '@auth/domain/exceptions/invalid-credential';
 

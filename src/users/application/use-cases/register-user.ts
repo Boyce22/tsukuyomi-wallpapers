@@ -1,6 +1,6 @@
 import { CreateUser, IUserRepository } from '../../types/user.types';
-import { IAuthenticateUserUseCase } from '../../../auth/application/use-cases/authenticate-user';
-import { AuthToken } from '../../../auth/types/auth.type';
+import { IAuthenticateUserUseCase } from '@auth/application/use-cases/authenticate-user';
+import { AuthToken } from '@auth/types/auth.type';
 
 export interface IRegisterUserUseCase {
   execute(dto: CreateUser): Promise<AuthToken>;

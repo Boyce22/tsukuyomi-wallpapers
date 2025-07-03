@@ -14,7 +14,8 @@
       "@users/*": ["src/users/*"],
       "@wallpapers/*": ["src/wallpapers/*"],
       "@shared/*": ["src/shared/*"],
-      "@main/*": ["src/main/*"]
+      "@main/*": ["src/main/*"],
+      "@role/*": ["src/role/*"]
     },
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist", // pasta onde o JS compilado vai
