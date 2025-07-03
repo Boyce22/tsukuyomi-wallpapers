@@ -8,7 +8,7 @@ import { WallpaperStatus } from '@wallpapers/types/wallpaper-status.enum';
 import { TDiscordService } from '@shared/application/ports/services/discord';
 import { StorageConfigError } from '@shared/domain/exceptions/storage-config-error';
 import { FileRequiredError } from '@shared/domain/exceptions/file-required-error';
-import { InvalidTagsError } from '../../../tags/domain/exceptions/invalid-tags-error';
+import { InvalidTagsError } from '@tags/domain/exceptions/invalid-tags-error';
 import { WallpaperRegistrationError } from '@wallpapers/domain/exceptions/wallpaper-registration-error';
 
 export interface IRegisterWallpaperUseCase {

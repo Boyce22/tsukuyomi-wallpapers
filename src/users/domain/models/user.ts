@@ -1,6 +1,6 @@
 import { Role } from '@role/domain/models/role';
-import { Tag } from '../../../tags/domain/models/tag';
-import { Wallpaper } from '../../../wallpapers/domain/models/wallpaper';
+import { Tag } from '@tags/domain/models/tag';
+import { Wallpaper } from '@wallpapers/domain/models/wallpaper';
 
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 

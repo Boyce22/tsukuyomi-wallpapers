@@ -4,7 +4,7 @@ import { createUserRouter } from '@users/infrastructure/routes/user';
 import { createTagsRouter } from '@tags/infrastructure/routes/tags';
 import { createStorageRouter } from '@wallpapers/infrastructure/routes/storage';
 import { createWallpaperRouter } from '@wallpapers/infrastructure/routes/wallpaper';
-import { createAuthRouter } from '../../auth/infrastructure/routes/auth';
+import { createAuthRouter } from '@auth/infrastructure/routes/auth';
 
 const router = Router();
 
