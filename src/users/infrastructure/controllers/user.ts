@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { CreateUser } from '../../types/user.types';
-import { IRegisterUserUseCase } from '../../application/use-cases/register-user';
+import { IRegisterUserUseCase } from '@users/application/use-cases/register-user';
 import { IChangeProfilePictureUseCase } from '../../application/use-cases/change-profile-picture';
 import { FileRequiredError } from '@shared/domain/exceptions/file-required-error';
 

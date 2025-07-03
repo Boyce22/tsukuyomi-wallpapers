@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { IHashProvider } from '../../../auth/types/auth.type';
+import { IHashProvider } from '@auth/types/auth.type';
 
 class HashProvider implements IHashProvider {
   private readonly saltRounds: number = 10;

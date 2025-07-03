@@ -1,5 +1,5 @@
-import { User } from '../../../users/domain/models/user';
-import { Wallpaper } from '../../../wallpapers/domain/models/wallpaper';
+import { User } from '@users/domain/models/user';
+import { Wallpaper } from '@wallpapers/domain/models/wallpaper';
 
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 'typeorm';
 
