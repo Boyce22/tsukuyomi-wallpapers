@@ -18,8 +18,8 @@
       "@role/*": ["src/role/*"]
     },
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist", // pasta onde o JS compilado vai
-    "rootDir": "src", // pasta raiz do TS fonte
+    "outDir": "dist",
+    "rootDir": "src",
     "sourceMap": true // gera sourcemap para facilitar debug
   },
   "include": ["src"],
