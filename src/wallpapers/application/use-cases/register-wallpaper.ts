@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v6 as uuidv6 } from 'uuid';
 import { QualityCompress } from '@shared/types/quality.enum';
 import { TImageCompressorService } from '@shared/application/ports/services/image-compressor';
 import { TStorageService } from '@shared/application/ports/services/storage';
@@ -59,7 +59,7 @@ export class RegisterWallpaperUseCase {
 
     const tags = await this.tagService.execute(dto.tagsIDs);
 
-    const uploadIdentifier = uuidv4(); // Unique identifier for file names in storage, not the database ID.
+    const uploadIdentifier = uuidv6(); // Unique identifier for file names in storage, not the database ID.
 
     try {
       const compressedImage = await this.imageCompressService.compress(

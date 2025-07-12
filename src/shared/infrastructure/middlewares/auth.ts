@@ -1,11 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import UserRepository from '@users/infrastructure/repositories/user';
 
 interface JWT {
   id: string;
+  iat: number;
 }
 
-const authenticate = (req: Request, res: Response, next: NextFunction): void => {
+const validateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -18,6 +20,22 @@ const authenticate = (req: Request, res: Response, next: NextFunction): void => 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWT;
 
+    const userRepository = new UserRepository();
+
+    const user = await userRepository.findById(decoded.id);
+
+    if (!user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    const tokenIssuedAt = new Date(decoded.iat * 1000);
+
+    if (user.lastPasswordChange && tokenIssuedAt < user.lastPasswordChange) {
+      res.status(401).json({ message: 'Token invalid due to password change' });
+      return;
+    }
+
     req.userId = decoded.id;
 
     next();
@@ -27,4 +45,4 @@ const authenticate = (req: Request, res: Response, next: NextFunction): void => 
   }
 };
 
-export { authenticate };
+export { validateToken };

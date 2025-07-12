@@ -1,9 +1,18 @@
-import path from 'path';
 import multer from 'multer';
 
 const baseDir = process.env.COMPRESS_OUTPUT_PATH_DIR || '_temp';
 
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, baseDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const sanatize = (name: string) => name.replace(/[\\/:*?\"<>|]/g, '_').replace(/[^a-zA-Z0-9.\-_]/g, '');
+
+    cb(null, sanatize(`${uniqueSuffix}-${file.originalname}`));
+  },
+});
 
 export default multer({
   storage,

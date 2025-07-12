@@ -1,5 +1,5 @@
-import { Role } from '@role/domain/models/role';
 import { Tag } from '@tags/domain/models/tag';
+import { Role } from '@role/domain/models/role';
 import { Wallpaper } from '@wallpapers/domain/models/wallpaper';
 
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
@@ -32,6 +32,9 @@ export class User {
 
   @Column({ nullable: true, length: 255 })
   profilePictureUrl?: string;
+
+  @Column({ type: 'date', nullable: false, default: new Date() })
+  lastPasswordChange!: Date;
 
   @Column({ nullable: true, length: 255 })
   bannerUrl?: string;

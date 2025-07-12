@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@types/*": ["src/@types/*"],
       "@auth/*": ["src/auth/*"],
       "@tags/*": ["src/tags/*"],
       "@users/*": ["src/users/*"],

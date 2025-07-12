@@ -5,7 +5,7 @@ import { AuthToken, IHashProvider } from '../../types/auth.type';
 import { InvalidCredential } from '@auth/domain/exceptions/invalid-credential';
 
 export interface IAuthenticateUserUseCase {
-  authenticate(email: string, password: string): Promise<AuthToken>;
+  execute(email: string, password: string): Promise<AuthToken>;
 }
 
 class AuthenticateUserUseCase implements IAuthenticateUserUseCase {
@@ -15,6 +15,10 @@ class AuthenticateUserUseCase implements IAuthenticateUserUseCase {
   constructor(userRepository: IUserRepository, hashProvider: IHashProvider) {
     this.userRepository = userRepository;
     this.hashProvider = hashProvider;
+  }
+
+  async execute(email: string, password: string): Promise<AuthToken> {
+    return await this.authenticate(email, password);
   }
 
   async authenticate(email: string, password: string): Promise<AuthToken> {

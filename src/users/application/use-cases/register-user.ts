@@ -1,23 +1,29 @@
-import { CreateUser, IUserRepository } from '../../types/user.types';
-import { IAuthenticateUserUseCase } from '@auth/application/use-cases/authenticate-user';
-import { AuthToken } from '@auth/types/auth.type';
+import { IHashProvider } from '@auth/types/auth.type';
+
+import type { User } from '@users/domain/models/user';
+import { CreateUser, IUserRepository } from '@users/types/user.types';
 
 export interface IRegisterUserUseCase {
-  execute(dto: CreateUser): Promise<AuthToken>;
+  execute(dto: CreateUser): Promise<User>;
 }
 
 export class RegisterUserUseCase implements IRegisterUserUseCase {
+  private readonly hashProvider: IHashProvider;
   private readonly userRepository: IUserRepository;
-  private readonly authService: IAuthenticateUserUseCase;
 
-  constructor(userRepository: IUserRepository, authService: IAuthenticateUserUseCase) {
+  constructor(userRepository: IUserRepository, hashProvider: IHashProvider) {
+    this.hashProvider = hashProvider;
     this.userRepository = userRepository;
-    this.authService = authService;
   }
 
-  async execute(dto: CreateUser): Promise<AuthToken> {
-    const user = await this.userRepository.register(dto);
-    const token = await this.authService.authenticate(user.email, dto.password);
-    return token;
+  async execute(dto: CreateUser): Promise<User> {
+    const hashedPassword = await this.hashProvider.hash(dto.password);
+
+    const user = await this.userRepository.register({
+      ...dto,
+      password: hashedPassword,
+    });
+
+    return user;
   }
 }

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import fs from 'fs/promises';
 import express, { Request, Response, NextFunction } from 'express';
 
 import routes from './routes/_index';

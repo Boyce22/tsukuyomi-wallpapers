@@ -12,14 +12,15 @@ export const makeUserController = () => {
   const userRepository = new UserRepository();
   const hashProvider = new HashProvider();
   const authenticateUserUseCase = new AuthenticateUserUseCase(userRepository, hashProvider);
-  const registerUserUseCase = new RegisterUserUseCase(userRepository, authenticateUserUseCase);
+  const registerUserUseCase = new RegisterUserUseCase(userRepository, hashProvider);
   const imageCompressService = new ImageCompressService();
   const storageService = new BackBlazeService();
+
   const changeProfilePictureUseCase = new ChangeProfilePictureUseCase(
     userRepository,
     storageService,
     imageCompressService,
   );
 
-  return new UserController(registerUserUseCase, changeProfilePictureUseCase);
+  return new UserController(registerUserUseCase, authenticateUserUseCase, changeProfilePictureUseCase);
 };

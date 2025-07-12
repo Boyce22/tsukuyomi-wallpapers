@@ -28,6 +28,10 @@ class UserRepository implements IUserRepository {
     return await this.repository.findOneBy({ email });
   }
 
+  async findById(id: string): Promise<User | null> {
+    return await this.repository.findOneBy({ id });
+  }
+
   async changeProfilePicture(id: string, path: string): Promise<void> {
     await this.repository.update({ id }, { profilePictureUrl: path });
   }
