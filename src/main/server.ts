@@ -14,6 +14,15 @@ app.use(express.json());
 // Rotas da API versionadas
 app.use('/tsukuyomi/v1', routes);
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.on('finish', () => {
+    if (req.file) {
+      fs.unlink(req.file.path);
+    }
+  });
+  next();
+});
+
 // Middleware global de tratamento de erros
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   const isProd = process.env.NODE_ENV === 'production';

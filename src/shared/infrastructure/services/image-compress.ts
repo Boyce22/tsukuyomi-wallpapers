@@ -15,12 +15,12 @@ class ImageCompressService implements TImageCompressorService {
   };
 
   async compress(
-    image: Buffer,
+    path: string,
     quality: QualityCompress,
     originalMimeType: string,
   ): Promise<{ buffer: Buffer; mimeType: string }> {
     try {
-      const sharpInstance = sharp(image);
+      const sharpInstance = sharp(path);
       const formatHandler = this.formatMap[originalMimeType];
 
       if (!formatHandler) {

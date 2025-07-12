@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import { v6 as uuidv6 } from 'uuid';
 import { QualityCompress } from '@shared/types/quality.enum';
 import { TImageCompressorService } from '@shared/application/ports/services/image-compressor';
@@ -63,7 +64,7 @@ export class RegisterWallpaperUseCase {
 
     try {
       const compressedImage = await this.imageCompressService.compress(
-        file.buffer,
+        file.path,
         QualityCompress.MEDIUM,
         file.mimetype,
       );
@@ -112,6 +113,8 @@ export class RegisterWallpaperUseCase {
       return 'Upload successful. Admins will review your wallpaper.';
     } catch (error) {
       throw new WallpaperRegistrationError('Failed to upload wallpaper.');
+    } finally {
+      fs.unlink(file.path);
     }
   }
 }
