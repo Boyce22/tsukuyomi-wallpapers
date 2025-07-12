@@ -32,16 +32,12 @@ class UserController {
 
   async changeProfilePicture(req: Request, res: Response): Promise<void> {
     if (!req.file) {
-      throw new FileRequiredError('Photo is required');
+      throw new FileRequiredError('Please provide a photo');
     }
 
     const id = req.userId!;
 
-    const response = await this.changeProfilePictureUseCase.execute(id, {
-      buffer: req.file.buffer,
-      mimetype: req.file.mimetype,
-      originalname: req.file.originalname,
-    });
+    const response = await this.changeProfilePictureUseCase.execute(id, req.file);
 
     res.status(200).json(response);
   }

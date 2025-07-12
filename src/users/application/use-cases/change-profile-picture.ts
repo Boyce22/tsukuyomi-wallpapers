@@ -7,7 +7,7 @@ import { FileRequiredError } from '@shared/domain/exceptions/file-required-error
 import { StorageConfigError } from '@shared/domain/exceptions/storage-config-error';
 
 export interface IChangeProfilePictureUseCase {
-  execute(id: string, file: { buffer: Buffer; mimetype: string; originalname: string }): Promise<string>;
+  execute(id: string, file: Express.Multer.File ): Promise<string>;
 }
 
 export class ChangeProfilePictureUseCase implements IChangeProfilePictureUseCase {
@@ -37,21 +37,15 @@ export class ChangeProfilePictureUseCase implements IChangeProfilePictureUseCase
     return bucket;
   }
 
-  async execute(id: string, file: { buffer: Buffer; mimetype: string; originalname: string }): Promise<string> {
-    if (!file) {
-      throw new FileRequiredError('File is required');
-    }
-
+  async execute(id: string, file: Express.Multer.File ): Promise<string> {
     try {
       const compressedImage = await this.imageCompressorService.compress(
-        file.buffer,
+        file.path,
         QualityCompress.MEDIUM,
         file.mimetype,
       );
 
-      const fileName = `${Date.now()}-${file.originalname}`;
-
-      const key = `profile-pictures/${id}/${fileName}`;
+      const key = `profile-pictures/${id}/${file.filename}`;
 
       await this.storageService.upload({
         key,
