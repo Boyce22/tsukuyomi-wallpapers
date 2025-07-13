@@ -2,6 +2,10 @@ import 'dotenv/config';
 
 import { DataSource } from 'typeorm';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const rootDir = isProduction ? 'dist' : 'src';
+const extension = isProduction ? 'js' : 'ts';
+
 const PORT = parseInt(process.env.DB_PORT!);
 
 const AppDataSource = new DataSource({
@@ -13,8 +17,8 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: ['src/**/domain/models/*.ts'],
-  migrations: ['src/shared/infrastructure/migrations/*.ts'],
+  entities: [`${rootDir}/**/domain/models/*.${extension}`],
+  migrations: [`${rootDir}/shared/infrastructure/migrations/*.${extension}`],
   migrationsTableName: 'migrations',
 });
 
