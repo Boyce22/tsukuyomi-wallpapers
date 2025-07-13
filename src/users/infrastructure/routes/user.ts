@@ -1,8 +1,7 @@
-import multer from '@shared/infrastructure/config/multer';
-
-import { validateToken } from '@shared/infrastructure/middlewares/auth';
-
 import { Router, type Request, type Response } from 'express';
+
+import multer from '@shared/infrastructure/config/multer';
+import { validateToken } from '@shared/infrastructure/middlewares/auth';
 import { makeUserController } from '@users/main/factories/user-controller-factory';
 
 export const createUserRouter = () => {
@@ -19,6 +18,13 @@ export const createUserRouter = () => {
     multer.single('profilePicture'),
     (req: Request, res: Response) => controller.changeProfilePicture(req, res),
   );
+
+  router.post(
+    '/change-profile-banner',
+    validateToken,
+    multer.single('profileBanner'),
+    (req: Request, res: Response) => controller.changeProfileBanner(req, res),
+  )
 
   return router;
 };

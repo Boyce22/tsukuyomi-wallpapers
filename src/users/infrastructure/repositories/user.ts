@@ -44,6 +44,10 @@ class UserRepository implements IUserRepository {
     await this.repository.update({ id }, { profilePictureUrl: path });
   }
 
+  async changeProfileBanner(id: string, path: string): Promise<void> {
+    await this.repository.update({ id }, { bannerUrl: path });
+  }
+
   async changePassword(id: string, password: string): Promise<void> {
     await this.repository.update({ id }, { password, lastPasswordChange: new Date() });
   }
