@@ -3,6 +3,8 @@ import { IUserRepository } from '@users/types/user.types';
 import { QualityCompress } from '@shared/types/quality.enum';
 import { TStorageService } from '@shared/application/ports/services/storage';
 import { TImageCompressorService } from '@shared/application/ports/services/image-compressor';
+import { StorageConfigError } from '@shared/domain/exceptions/storage-config-error';
+import { BannerPictureChangeError } from '@users/domain/exceptions/banner-picture-change-error';
 
 export interface IChangeProfileBannerUseCase {
   execute(id: string, banner: Express.Multer.File): Promise<string>;
@@ -32,7 +34,7 @@ export class ChangeProfileBannerUseCase implements IChangeProfileBannerUseCase {
     const bucket = process.env.STORAGE_PROFILE_BANNER_BUCKET;
 
     if (!bucket) {
-      throw new Error('Missing environment variable: STORAGE_PROFILE_BANNER_BUCKET');
+      throw new StorageConfigError('Missing environment variable: STORAGE_PROFILE_BANNER_BUCKET');
     }
 
     return bucket;
@@ -60,7 +62,7 @@ export class ChangeProfileBannerUseCase implements IChangeProfileBannerUseCase {
       return 'Profile banner changed successfully';
     } catch (error) {
       console.error('Error changing profile banner:', error);
-      throw new Error('Failed to change profile banner.');
+      throw new BannerPictureChangeError('Failed to change profile banner.');
     } finally {
       fs.unlink(banner.path);
     }
