@@ -7,3 +7,6 @@ _temp
 node_modules
 tsconfig.tsbuildinfo
 .dependency-cruiser.js
+
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md

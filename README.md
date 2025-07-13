@@ -1,123 +1,147 @@
 # Tsukuyomi API
 
-## Descrição
+## Proposta do Projeto
 
-Tsukuyomi é uma API robusta e escalável desenvolvida para gerenciar usuários, autenticação, tags e wallpapers. A aplicação inclui funcionalidades de processamento de imagem, integração com serviços de armazenamento de arquivos e comunicação com plataformas externas, como o Discord. Projetada com uma arquitetura limpa, a API visa fornecer uma base sólida para aplicações que necessitam de gerenciamento de conteúdo visual e de usuários.
+Tsukuyomi é uma API open-source robusta e escalável, projetada para ser a espinha dorsal de plataformas de conteúdo visual e artístico. O objetivo principal é fornecer uma solução completa para gerenciamento de usuários, autenticação, organização de mídias (como wallpapers) e um sistema de tags flexível.
+
+A API foi construída com foco em alta performance, arquitetura limpa e manutenibilidade, permitindo que desenvolvedores criem aplicações ricas e interativas sobre uma base sólida e confiável.
 
 ## Funcionalidades
 
--   **Autenticação de Usuários**: Registro e autenticação de usuários com segurança.
--   **Gerenciamento de Usuários**: Funcionalidades para atualização de perfil, incluindo alteração de foto de perfil.
--   **Gerenciamento de Tags**: Criação, busca e associação de tags a conteúdos.
--   **Gerenciamento de Wallpapers**: Upload, registro e recuperação de wallpapers, incluindo metadados e tamanhos originais.
--   **Processamento de Imagens**: Compressão e otimização de imagens para diferentes usos.
--   **Integração com Armazenamento**: Suporte para serviços de armazenamento de objetos (e.g., Backblaze).
--   **Notificações**: Integração com Discord para notificações ou outras interações.
+-   **Autenticação Segura**: Sistema de registro e login de usuários utilizando hashing de senhas e tokens JWT.
+-   **Gerenciamento de Perfis**: Permite que os usuários personalizem seus perfis, incluindo a alteração de fotos e banners.
+-   **Organização de Conteúdo**: Upload, compressão e gerenciamento de wallpapers, com suporte para diferentes resoluções e metadados.
+-   **Sistema de Tags**: Funcionalidades para criar, associar e buscar tags, facilitando a descoberta de conteúdo.
+-   **Processamento de Imagem**: Otimização de imagens em tempo real para garantir performance e qualidade visual.
+-   **Armazenamento Flexível**: Integração com serviços de armazenamento de objetos como Backblaze B2, AWS S3, entre outros.
+-   **Notificações**: Capacidade de enviar notificações para plataformas como o Discord através de webhooks.
 
-## Tecnologias Utilizadas
+## Guia de Configuração (Passo a Passo)
 
--   **TypeScript**: Linguagem de programação principal para tipagem estática e melhor manutenibilidade.
--   **Node.js**: Ambiente de execução JavaScript assíncrono e orientado a eventos.
--   **Express.js**: Framework web para construção de APIs RESTful.
--   **TypeORM**: ORM (Object-Relational Mapper) para interação com o banco de dados, facilitando a manipulação de entidades e migrações.
--   **Multer**: Middleware para Node.js que facilita o upload de arquivos.
--   **bcrypt**: Biblioteca para hashing de senhas.
--   **Outras**: Dependências para compressão de imagem, serviços de armazenamento e comunicação com Discord.
+Siga as instruções abaixo para configurar e executar o projeto em seu ambiente de desenvolvimento local.
 
-## Primeiros Passos
+### 1. Pré-requisitos
 
-Para configurar e executar o projeto localmente, siga as instruções abaixo.
+Antes de começar, garanta que você tenha as seguintes ferramentas instaladas:
 
-### Pré-requisitos
+-   **Node.js**: Versão 18.x ou superior.
+-   **npm** ou **Yarn**: Gerenciador de pacotes do Node.js.
+-   **Docker** e **Docker Compose**: Para executar o banco de dados de forma isolada.
+-   **Git**: Para clonar o repositório.
 
-Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
+### 2. Clonando o Repositório
 
--   Node.js (versão 18.x ou superior)
--   npm (gerenciador de pacotes do Node.js)
--   Docker e Docker Compose (recomendado para o banco de dados)
+Abra seu terminal e clone o projeto:
 
-### Instalação
+```bash
+git clone https://github.com/Boyce22/tsukuyomi.git
+cd tsukuyomi
+```
 
-1.  Clone o repositório:
+### 3. Instalando as Dependências
 
-    ```bash
-    git clone https://github.com/seu-usuario/tsukuyomi.git
-    cd tsukuyomi
-    ```
+Instale todas as dependências necessárias com o seguinte comando:
 
-2.  Instale as dependências do projeto:
+```bash
+npm install
+```
 
-    ```bash
-    npm install
-    ```
+### 4. Configurando as Variáveis de Ambiente
 
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto com base no `.env.example` (se houver) ou com as seguintes variáveis:
+Crie um arquivo chamado `.env` na raiz do projeto. Você pode copiar o exemplo abaixo e preencher com suas próprias credenciais:
 
 ```env
+# Configurações da Aplicação
 PORT=3000
+
+# Configurações do Banco de Dados (PostgreSQL)
 DATABASE_TYPE=postgres
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
-DATABASE_USERNAME=user
-DATABASE_PASSWORD=password
-DATABASE_NAME=tsukuyomi_db
-JWT_SECRET=sua_chave_secreta_jwt
-BACKBLAZE_KEY_ID=sua_key_id_backblaze
-BACKBLAZE_APPLICATION_KEY=sua_application_key_backblaze
-DISCORD_WEBHOOK_URL=sua_webhook_url_discord
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=admin
+DATABASE_NAME=tsukuyomi
+
+# Autenticação (JWT)
+JWT_SECRET=your_super_secret_jwt_key
+
+# Serviços de Armazenamento (Ex: Backblaze B2)
+STORAGE_PROFILE_PICTURE_BUCKET=seu-bucket-de-fotos-de-perfil
+STORAGE_PROFILE_BANNER_BUCKET=seu-bucket-de-banners-de-perfil
+BACKBLAZE_KEY_ID=sua_key_id
+BACKBLAZE_APPLICATION_KEY=sua_application_key
+
+# Integrações (Ex: Discord)
+DISCORD_WEBHOOK_URL=seu_webhook_do_discord
 ```
 
-Certifique-se de preencher os valores com suas credenciais e configurações apropriadas.
+### 5. Executando o Banco de Dados com Docker
 
-### Executando o Banco de Dados (com Docker Compose)
-
-Um arquivo `docker-compose.yml` foi fornecido para facilitar a configuração do banco de dados PostgreSQL. Para iniciar o banco de dados:
+Para facilitar a configuração, o projeto inclui um arquivo `docker-compose.yml` para iniciar um contêiner PostgreSQL.
 
 ```bash
 docker-compose up -d
 ```
 
-Este comando irá iniciar um contêiner PostgreSQL e criar um volume para persistência dos dados.
+Este comando irá baixar a imagem do PostgreSQL e iniciar o serviço em segundo plano.
 
-### Executando Migrações
+### 6. Aplicando as Migrações
 
-Após configurar o banco de dados, execute as migrações para criar o esquema:
+Com o banco de dados em execução, aplique as migrações para criar as tabelas e estruturas necessárias:
 
 ```bash
-npm run typeorm migration:run
+npm run migration:run
 ```
 
-### Executando a Aplicação
+### 7. Executando a API
 
-Para iniciar a API em modo de desenvolvimento:
+Finalmente, inicie a API em modo de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-Para construir e iniciar a aplicação em modo de produção:
+A API estará disponível em `http://localhost:3000` (ou na porta que você definiu no arquivo `.env`).
+
+## Como Contribuir
+
+Ficamos felizes com o seu interesse em contribuir para o Tsukuyomi! Para garantir um processo tranquilo e eficiente para todos, siga os passos abaixo.
+
+### 1. Encontre uma Issue ou Crie uma Nova
+
+-   **Explore as Issues**: Verifique as [issues abertas](https://github.com/Boyce22/tsukuyomi/issues) para encontrar tarefas disponíveis, bugs que precisam de correção ou novas funcionalidades.
+-   **Crie uma Issue**: Se você tem uma ideia para uma nova funcionalidade ou encontrou um bug que ainda não foi relatado, sinta-se à vontade para [criar uma nova issue](https://github.com/Boyce22/tsukuyomi/issues/new).
+
+### 2. Faça um Fork do Repositório
+
+Crie um fork do projeto para o seu próprio GitHub. Isso permite que você trabalhe em suas alterações sem afetar o repositório principal.
+
+### 3. Crie uma Branch para sua Contribuição
+
+Crie uma branch descritiva para a sua contribuição. Use um prefixo como `feat/` para novas funcionalidades ou `fix/` para correções de bugs.
 
 ```bash
-npm run build
-npm start
+git checkout -b feat/adicionar-nova-funcionalidade
 ```
 
-A API estará disponível em `http://localhost:PORT` (onde `PORT` é a porta configurada no seu arquivo `.env`).
+### 4. Desenvolva e Faça o Commit das Suas Alterações
 
-## Endpoints da API (Visão Geral)
+Faça as alterações necessárias no código. Siga as convenções de estilo e formatação do projeto. Ao fazer o commit, utilize mensagens claras e descritivas, seguindo o padrão de commits do projeto.
 
--   `/auth`: Endpoints para registro e autenticação de usuários.
--   `/users`: Gerenciamento de perfis de usuário.
--   `/tags`: Operações relacionadas a tags.
--   `/wallpapers`: Upload e recuperação de wallpapers.
--   `/storage`: Operações relacionadas ao armazenamento de arquivos.
+```bash
+git commit -m "feat(users): Adiciona a funcionalidade X"
+```
 
-## Contribuindo
+### 5. Envie um Pull Request (PR)
 
-Contribuições são bem-vindas! Por favor, leia o `CONTRIBUTING.md` (se disponível) para detalhes sobre nosso código de conduta e o processo para submeter pull requests.
+Após concluir suas alterações, envie um Pull Request do seu fork para a branch `main` do repositório original. No PR, descreva as alterações que você fez e vincule a issue correspondente (ex: `Closes #123`).
+
+### 6. Revisão de Código
+
+Aguarde a revisão do seu PR. Os mantenedores do projeto irão revisar suas alterações, fornecer feedback e, se tudo estiver correto, aprovar e fazer o merge da sua contribuição.
+
+Agradecemos por sua ajuda em tornar o Tsukuyomi ainda melhor!
 
 ## Licença
 
-Este projeto está licenciado sob os termos da licença personalizada da Tsukuyomi INC. Para mais detalhes, consulte o arquivo `LICENSE` na raiz do repositório.
+Este projeto está licenciado sob os termos da licença ISC. Para mais detalhes, consulte o arquivo `LICENSE`.
