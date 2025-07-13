@@ -22,7 +22,7 @@ const validateToken = async (req: Request, res: Response, next: NextFunction): P
 
     const userRepository = new UserRepository();
 
-    const user = await userRepository.findById(decoded.id);
+    const user = await userRepository.findLastPasswordChangeById(decoded.id);
 
     if (!user) {
       res.status(401).json({ message: 'Unauthorized' });

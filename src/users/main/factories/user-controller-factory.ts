@@ -7,6 +7,7 @@ import HashProvider from '@shared/infrastructure/services/hash-provider';
 import AuthenticateUserUseCase from '@auth/application/use-cases/authenticate-user';
 import BackBlazeService from '@shared/infrastructure/services/back-blaze';
 import ImageCompressService from '@shared/infrastructure/services/image-compress';
+import { ChangePasswordUseCase } from '@users/application/use-cases/change-password';
 
 export const makeUserController = () => {
   const userRepository = new UserRepository();
@@ -22,5 +23,12 @@ export const makeUserController = () => {
     imageCompressService,
   );
 
-  return new UserController(registerUserUseCase, authenticateUserUseCase, changeProfilePictureUseCase);
+  const changePasswordUseCase = new ChangePasswordUseCase(userRepository, hashProvider);
+
+  return new UserController(
+    registerUserUseCase,
+    authenticateUserUseCase,
+    changeProfilePictureUseCase,
+    changePasswordUseCase,
+  );
 };

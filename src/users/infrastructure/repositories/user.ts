@@ -28,12 +28,24 @@ class UserRepository implements IUserRepository {
     return await this.repository.findOneBy({ email });
   }
 
+  async findLastPasswordChangeById(id: string): Promise<User | null> {
+    return await this.repository
+      .createQueryBuilder('user')
+      .where({ id: id })
+      .select('user.lastPasswordChange')
+      .getOne();
+  }
+
   async findById(id: string): Promise<User | null> {
     return await this.repository.findOneBy({ id });
   }
 
   async changeProfilePicture(id: string, path: string): Promise<void> {
     await this.repository.update({ id }, { profilePictureUrl: path });
+  }
+
+  async changePassword(id: string, password: string): Promise<void> {
+    await this.repository.update({ id }, { password, lastPasswordChange: new Date() });
   }
 }
 

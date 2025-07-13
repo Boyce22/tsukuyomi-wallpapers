@@ -14,4 +14,6 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   changeProfilePicture(id: string, path: string): Promise<void>;
+  changePassword(id: string, password: string): Promise<void>;
+  findLastPasswordChangeById(id: string): Promise<User | null>;
 }
