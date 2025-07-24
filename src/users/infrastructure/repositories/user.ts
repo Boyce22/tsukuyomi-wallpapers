@@ -25,7 +25,11 @@ class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.repository.findOneBy({ email });
+    return await this.repository.findOne({
+      where: { email },
+      select: ['password', 'id'],
+      relations: ['roles'],
+    });
   }
 
   async findLastPasswordChangeById(id: string): Promise<User | null> {
