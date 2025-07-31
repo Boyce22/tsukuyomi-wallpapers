@@ -1,5 +1,5 @@
-import { User } from '../../domain/models/user';
 import { Repository } from 'typeorm';
+import { User } from '../../domain/models/user';
 import AppDataSource from '@shared/infrastructure/config/database';
 import { CreateUser, IUserRepository } from '../../types/user.types';
 
@@ -28,7 +28,7 @@ class UserRepository implements IUserRepository {
     return await this.repository.findOne({
       where: { email },
       select: ['password', 'id'],
-      relations: ['roles'],
+      relations: ['userRoles', 'userRoles.role'],
     });
   }
 

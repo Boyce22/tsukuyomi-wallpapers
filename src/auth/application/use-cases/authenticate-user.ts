@@ -30,7 +30,7 @@ class AuthenticateUserUseCase implements IAuthenticateUserUseCase {
       throw new InvalidCredential();
     }
 
-    const roles = user.roles.map((role) => role.name);
+    const roles = user.userRoles.map(({ role }) => role.name);
 
     const token = jwt.sign({ id: user.id, email: user.email, roles }, process.env.JWT_SECRET!, {
       expiresIn: '1h',

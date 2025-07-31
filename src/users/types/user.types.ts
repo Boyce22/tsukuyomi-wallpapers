@@ -18,3 +18,7 @@ export interface IUserRepository {
   changePassword(id: string, password: string): Promise<void>;
   findLastPasswordChangeById(id: string): Promise<User | null>;
 }
+
+export interface IUserRoleRepository {
+  associate(userId: string, roleId: string): Promise<void>;
+}

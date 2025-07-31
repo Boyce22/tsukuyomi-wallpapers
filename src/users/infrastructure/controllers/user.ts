@@ -6,6 +6,8 @@ import { FileRequiredError } from '@shared/domain/exceptions/file-required-error
 import AuthenticateUserUseCase from '@auth/application/use-cases/authenticate-user';
 import { IChangePasswordUseCase } from '@users/application/use-cases/change-password';
 import { IChangeProfileBannerUseCase } from '@users/application/use-cases/change-profile-banner';
+import { AssociateRoleUseCase } from '@users/application/use-cases/associate-role';
+import { Roles } from '@shared/infrastructure/middlewares/auth';
 
 class UserController {
   private readonly registerUserUseCase: IRegisterUserUseCase;
@@ -13,6 +15,7 @@ class UserController {
   private readonly changeProfilePictureUseCase: IChangeProfilePictureUseCase;
   private readonly changePasswordUseCase: IChangePasswordUseCase;
   private readonly changeProfileBannerUseCase: IChangeProfileBannerUseCase;
+  private readonly associateRoleUseCase: AssociateRoleUseCase;
 
   constructor(
     registerUserUseCase: IRegisterUserUseCase,
@@ -20,18 +23,22 @@ class UserController {
     changeProfilePictureUseCase: IChangeProfilePictureUseCase,
     changePasswordUseCase: IChangePasswordUseCase,
     changeProfileBannerUseCase: IChangeProfileBannerUseCase,
+    associateRoleUseCase: AssociateRoleUseCase,
   ) {
     this.registerUserUseCase = registerUserUseCase;
     this.authenticateUserUseCase = authenticateUserUseCase;
     this.changeProfilePictureUseCase = changeProfilePictureUseCase;
     this.changePasswordUseCase = changePasswordUseCase;
     this.changeProfileBannerUseCase = changeProfileBannerUseCase;
+    this.associateRoleUseCase = associateRoleUseCase;
   }
 
   async register(req: Request, res: Response): Promise<void> {
     const dto: CreateUser = req.body;
 
     const user = await this.registerUserUseCase.execute(dto);
+
+    await this.associateRoleUseCase.execute(user.id, Roles.USER);
 
     const token = await this.authenticateUserUseCase.execute(user.email, dto.password);
 

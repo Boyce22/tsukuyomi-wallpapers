@@ -3,6 +3,7 @@ import { Role } from '@role/domain/models/role';
 import { Wallpaper } from '@wallpapers/domain/models/wallpaper';
 
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { UserRole } from './user-role';
 
 @Entity('user')
 export class User {
@@ -51,7 +52,6 @@ export class User {
   @OneToMany(() => Tag, (tag) => tag.updatedBy)
   updatedTags!: Tag[];
 
-  @ManyToMany(() => Role, (role: Role) => role.users)
-  @JoinTable({ name: 'user_role' })
-  roles!: Role[];
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles!: UserRole[];
 }
