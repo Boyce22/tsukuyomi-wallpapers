@@ -88,6 +88,7 @@ export class RegisterWallpaperUseCase {
         mimeType: compressedImage.mimeType,
       });
 
+      // todo: Alterar para salvar a url ao invés do caminho no bucket, porém é necessário pagar o valor para liberar acesso ao bucket público
       const created = await this.wallpaperRepository.register({
         dto,
         tags,

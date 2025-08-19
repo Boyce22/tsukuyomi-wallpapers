@@ -18,6 +18,6 @@ export class UserRole {
   @JoinColumn({ name: 'role_id' })
   role!: Role;
 
-  @Column({ type: 'timestamp', default: () => 'now()', name: 'assigned_at' })
+  @Column({ type: 'timestamptz', default: () => 'now()', name: 'assigned_at' })
   assignedAt!: Date;
 }

@@ -16,8 +16,8 @@ import { WallpaperStatus } from '@wallpapers/types/wallpaper-status.enum';
 
 @Entity('wallpaper')
 export class Wallpaper {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
   @Column({ length: 255 })
   name!: string;
@@ -40,10 +40,10 @@ export class Wallpaper {
   @Column({ type: 'enum', enum: WallpaperStatus, default: WallpaperStatus.PENDING })
   status!: WallpaperStatus;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz', nullable: false, default: () => 'now()' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz', nullable: false, default: () => 'now()' })
   updatedAt!: Date;
 
   @Column({ type: 'float', nullable: true })

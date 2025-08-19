@@ -34,8 +34,8 @@ export class User {
   @Column({ nullable: true, length: 255 })
   profilePictureUrl?: string;
 
-  @Column({ type: 'timestamp', nullable: false, default: () => 'now()' })
-  lastPasswordChange!: Date;
+  @Column({ type: 'timestamptz', nullable: true })
+  lastPasswordChange!: Date | null;
 
   @Column({ nullable: true, length: 255 })
   bannerUrl?: string;

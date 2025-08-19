@@ -20,6 +20,10 @@ class WallpaperController {
     res.status(200).json({ url: originalUrl });
   }
 
+  async getFeatured(req: Request, res: Response): Promise<void> {
+    const { lastId } = req.query;
+  }
+
   async register(req: CreateWallpaperRequest, res: Response): Promise<void> {
     const file = req.file;
     const userId = req.userId!;

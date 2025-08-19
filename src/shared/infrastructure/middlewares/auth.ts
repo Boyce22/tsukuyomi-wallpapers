@@ -29,7 +29,8 @@ export const verifyAccess = (roles: string[]) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWT;
 
       const userRepository = new UserRepository();
-      const user = await userRepository.findLastPasswordChangeById(decoded.id);
+      
+      const user = await userRepository.findById(decoded.id);
 
       if (!user || (user.lastPasswordChange && new Date(decoded.iat * 1000) < user.lastPasswordChange)) {
         res.status(401).json({ message: 'Unauthorized' });
