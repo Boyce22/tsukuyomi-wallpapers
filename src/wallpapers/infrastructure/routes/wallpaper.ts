@@ -16,5 +16,7 @@ export const createWallpaperRouter = () => {
     controller.register(req, res),
   );
 
+  router.get('/getManyWithCursor', (req: Request, res: Response) => controller.getWallpapers(req, res));
+
   return router;
 };

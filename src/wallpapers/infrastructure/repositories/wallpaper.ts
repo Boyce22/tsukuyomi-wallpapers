@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import AppDataSource from '@shared/infrastructure/config/database';
 import { Wallpaper } from '../../domain/models/wallpaper';
 import { IRegisterWallpaper, IWallpaperRepository } from '../../types/wallpaper.types';
@@ -11,7 +11,7 @@ export default class WallpaperRepository implements IWallpaperRepository {
     this.repository = AppDataSource.getRepository(Wallpaper);
   }
 
-  async findUrlWithOriginalSizeById(id: string): Promise<string | null> {
+  async findUrlWithOriginalSizeById(id: number): Promise<string | null> {
     const wallpaper = await this.repository.findOneBy({ id });
     return wallpaper?.originalUrl ?? null;
   }
@@ -41,6 +41,18 @@ export default class WallpaperRepository implements IWallpaperRepository {
     });
 
     return await this.repository.save(wallpaper);
+  }
+
+  async findManyWithCursor(limit: number, cursor: string): Promise<Wallpaper[]> {
+    const options = {
+      status: WallpaperStatus.APPROVED,
+    };
+
+    return this.repository.find({
+      where: cursor ? { id: MoreThan(Number(cursor)), ...options } : { ...options },
+      order: { id: 'ASC' },
+      take: limit,
+    });
   }
 
   async updateStatus(id: string, status: WallpaperStatus, reportReason?: string): Promise<void> {

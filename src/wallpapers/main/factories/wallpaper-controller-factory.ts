@@ -1,3 +1,5 @@
+import { EmbedBuilder} from 'discord.js';
+
 import WallpaperController from '@wallpapers/infrastructure/controllers/wallpaper';
 import { RegisterWallpaperUseCase } from '@wallpapers/application/use-cases/register-wallpaper';
 import { GetOriginalSizeUseCase } from '@wallpapers/application/use-cases/get-original-size';
@@ -12,8 +14,8 @@ import { TagRepository } from '@tags/infrastructure/repositories/tag';
 
 import { ApproveWallpaperUseCase } from '@wallpapers/application/use-cases/approve-wallpaper';
 import { RejectWallpaperUseCase } from '@wallpapers/application/use-cases/reject-wallpaper';
-import { EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
 import { ReportWallpaperUseCase } from '@wallpapers/application/use-cases/report-wallpaper';
+import { GetWallpapersUseCase } from '@wallpapers/application/use-cases/get-wallpapers';
 
 export const makeWallpaperController = () => {
   const wallpaperRepository = new WallpaperRepository();
@@ -119,7 +121,9 @@ export const makeWallpaperController = () => {
     discordClient,
   );
 
+  const getWallpapersUseCase = new GetWallpapersUseCase(wallpaperRepository);
+
   const getOriginalSizeUseCase = new GetOriginalSizeUseCase(wallpaperRepository);
 
-  return new WallpaperController(registerWallpaperUseCase, getOriginalSizeUseCase);
+  return new WallpaperController(registerWallpaperUseCase, getOriginalSizeUseCase, getWallpapersUseCase);
 };

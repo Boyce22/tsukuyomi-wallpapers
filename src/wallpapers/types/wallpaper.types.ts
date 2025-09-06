@@ -29,7 +29,8 @@ export interface IRegisterWallpaper {
 }
 
 export interface IWallpaperRepository {
-  findUrlWithOriginalSizeById(id: string): Promise<string | null>;
+  findManyWithCursor(limit: number, cursor: string): Promise<Wallpaper[]>;
+  findUrlWithOriginalSizeById(id: number): Promise<string | null>;
   register(params: IRegisterWallpaper): Promise<Wallpaper>;
   updateStatus(id: string, status: WallpaperStatus): Promise<void>;
 }
